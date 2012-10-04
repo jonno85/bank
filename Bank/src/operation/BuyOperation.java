@@ -16,7 +16,7 @@ public class BuyOperation extends Operation {
 	public void doOperation(Account ref, Object[] obj) 
 		throws InvalidOperationException
 	{
-		if(ref.getActiveStatus() == true)
+		if((ref != null) && (ref.getActiveStatus() == true))
 		{
 			StateBond bond = (StateBond)obj[0];
 			if(ref.getAccountBalance() >= bond.getStateBondValue().getIntegerValue())
@@ -26,7 +26,7 @@ public class BuyOperation extends Operation {
 				throw new InvalidOperationException("Impossible to buy bond due to insufficient balance");
 			}
 		} else {
-			throw new InvalidOperationException("Impossible to buy bond due to closed account");
+			throw new InvalidOperationException("Impossible to buy bond due to disabled account or not selected");
 		}
 	}
 

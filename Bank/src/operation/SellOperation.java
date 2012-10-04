@@ -13,11 +13,11 @@ public class SellOperation extends Operation {
 	public void doOperation(Account ref, Object[] obj)
 		throws InvalidOperationException
 	{
-		if(ref.getActiveStatus() == true)
+		if((ref != null) && (ref.getActiveStatus() == true))
 		{
 			//TODO return the bond to the bank 
 		} else {
-			throw new InvalidOperationException("Impossible to buy bond due to closed account");
+			throw new InvalidOperationException("Impossible to buy bond due to disabled account or not selected");
 		}
 	}
 

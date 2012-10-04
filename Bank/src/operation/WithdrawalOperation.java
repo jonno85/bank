@@ -13,7 +13,7 @@ public class WithdrawalOperation extends Operation {
 	public void doOperation(Account ref, Object[] objs)
 			throws InvalidArgumentException, InvalidOperationException 
 	{
-		if(ref.getActiveStatus() == true)
+		if((ref != null) && (ref.getActiveStatus() == true))
 		{
 			if(objs instanceof String[])
 			{
@@ -21,6 +21,7 @@ public class WithdrawalOperation extends Operation {
 				amount = ref.getAccountBalance() - amount;
 				if(amount >= 0.0)
 				{
+					System.out.println("# Account: " + ref.getAccountHolder() + " withdrawal: "+ amount);
 					ref.setAccountBalance(amount);
 				} else {
 					throw new InvalidOperationException("Insufficient credit balance");
@@ -29,7 +30,7 @@ public class WithdrawalOperation extends Operation {
 				throw new InvalidArgumentException("Error: wrong numeric format");
 			}
 		} else {
-			throw new InvalidOperationException("Account not opened");
+			throw new InvalidOperationException("Account not enabled or not selected");
 		}
 		
 	}

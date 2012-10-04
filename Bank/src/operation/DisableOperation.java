@@ -16,6 +16,7 @@ public class DisableOperation extends Operation {
 		if(ref.getActiveStatus() == true)
 		{
 			ref.setActiveStatus(false);
+			System.out.println("# Account: " + ref.getAccountHolder() + " disabled");
 		} else {
 			throw new InvalidOperationException("Error: account already disabled");
 		}

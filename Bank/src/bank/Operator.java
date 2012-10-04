@@ -12,6 +12,7 @@ public class Operator {
 	
 	private String		working_name	= null;
 	private Agency		working_agency	= null;
+	private Account		bank_account	= null;
 	private Account		working_account	= null;
 	private Operation	working_oper	= null;
 	private Integer		counter			= null;
@@ -19,14 +20,17 @@ public class Operator {
 	
 	/**
 	 * full constructor
+	 * @param name
 	 * @param agency
+	 * @param bank_account
 	 * @param account
 	 * @param operation
 	 */
-	public Operator(String name, Agency agency, Account account, Operation operation)
+	public Operator(String name, Agency agency, Account bank_account, Account account, Operation operation)
 	{
 		this.working_name		= name;
 		this.working_agency		= agency;
+		this.bank_account		= bank_account;
 		this.working_account	= account;
 		this.working_oper		= operation;
 		this.history 			= new HashMap<Integer, Operation>();
@@ -37,13 +41,16 @@ public class Operator {
 	
 	/**
 	 * base constructor
+	 * @param name
 	 * @param agency
+	 * @param bank_account
 	 * @param account
 	 */
-	public Operator(String name, Agency agency, Account account)
+	public Operator(String name, Agency agency, Account bank_account, Account account)
 	{
 		this.working_name		= name;
 		this.working_agency		= agency;
+		this.bank_account		= bank_account;
 		this.working_account	= account;
 		this.history 			= new HashMap<Integer, Operation>();
 		this.counter			= new Integer(0);
@@ -68,6 +75,15 @@ public class Operator {
 	}
 	
 	/**
+	 * change the current working account
+	 * @param current_account
+	 */
+	public void setWorkingAccount(Account current_account)
+	{
+		this.working_account = current_account;
+	}
+	
+	/**
 	 * execute the actual operation
 	 * @param parameter: specific for the kind of operation to execute
 	 * @throws InvalidOperationException
@@ -75,17 +91,20 @@ public class Operator {
 	public void execOperation(Object[] parameters) 
 			throws InvalidArgumentException, InvalidOperationException
 	{
+		if(working_account != null)
+		{
+			System.out.println("# Account Selected: " + this.working_account.getAccountNumber() + " - " + this.working_account.getAccountHolder());
+		}
+		
 		if(working_oper != null)
 		{
-			
-			//System.out.print("operazione: "+ working_oper.toString() + " parameters: "+ parameters.toString()+" lemeneti: "+parameters.toString());
+			// !!working_account could not be necessary!! like for NewAccountOperation
 			working_oper.doOperation(working_account, parameters);
 			addHistoryOperation();
 			
-			/*** clean operation data ***/
+			/*** clean operation data ***/ 
 			working_oper	= null;
 			parameters		= null;
-			
 		} else {
 			throw new InvalidOperationException("Error: no operation defined");
 		}

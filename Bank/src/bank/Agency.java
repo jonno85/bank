@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 import operation.DepositOperation;
 import operation.DisableOperation;
 import operation.EnableOperation;
+import operation.InvalidArgumentException;
+import operation.InvalidOperationException;
 import operation.ListAccountOperation;
 import operation.NewAccountOperation;
 import operation.Operation;
@@ -54,7 +56,7 @@ public class Agency
 	
 	public void addAccount(String name)
 	{
-		Integer number = Utils.generateAccountNumber();
+		Integer number = agency_accounts.generateAccountNumber();
 		agency_accounts.put(number, new Account(number, name));
 	}
 	
@@ -92,7 +94,7 @@ public class Agency
 	
 	private static class SingletonOperatorHolder { 
         public static final Operator INSTANCE = 
-        		new Operator("admin", agency_1, headQuarter.getBankAccount());
+        		new Operator("admin", agency_1, headQuarter.getBankAccount(), null);
 	}
 
 	public static Operator getBankOperatorInstance() {
@@ -123,6 +125,7 @@ public class Agency
 	public static void main(String[] args) 
 	{
 		int persons = Integer.parseInt(args[0]);
+		char c 		= 0;
 		//int n_agencies = Integer.parseInt(args[1]);
 		
 		//System base bank creation
@@ -133,25 +136,24 @@ public class Agency
 		
 		sc = new Scanner(System.in);
 		
-		char c = 0;
 		printMenu();
 		try {
 			try{
 				for(;;)
 				{
 					c = sc.next().charAt(0);
-					//System.out.println("dentro: " + c);
 					switch(c)
 					{
 					case 'a':
-						adminMenu(c);
 						c = 0;
+						adminMenu();
 						break;
+						
 					case 'c':
-						System.out.flush();
-						System.out.print("\n\n\n\n\n\n\n\n\n\n");
-						printClientMenu();
+						c = 0;
+						clientMenu();
 						break;
+						
 					case 'x':
 						storeData();
 						System.out.println("Bank program Ended");
@@ -177,16 +179,23 @@ public class Agency
 		agency_1.opening(persons);
 	}
 	
+	/**
+	 * load agency accounts from a stored file
+	 */
 	private static void loadData()
 	{
-		FileInputStream fin;
+		FileInputStream	  fin = null;
+		ObjectInputStream ois = null;
 		try {
 			fin = new FileInputStream("\\data.ser");
-			ObjectInputStream ois = new ObjectInputStream(fin);
+			ois = new ObjectInputStream(fin);
+			
 			agency_1.agency_accounts = (SerializableHashMap) ois.readObject();
+			agency_1.agency_accounts.loadStoredValue();
 			ois.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.err.println("No stored account data founded");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -195,11 +204,16 @@ public class Agency
 		
 	}
 
+	/**
+	 * store any accounts to a persistent file
+	 */
 	private static void storeData()
 	{
+		FileOutputStream   fout = null;
+		ObjectOutputStream oos  = null;
 		try {
-			FileOutputStream fout = new FileOutputStream("\\data.ser");
-			ObjectOutputStream oos = new ObjectOutputStream(fout);
+			fout = new FileOutputStream("\\data.ser");
+			oos  = new ObjectOutputStream(fout);
 			
 			oos.writeObject(agency_1.agency_accounts);
 			oos.close();
@@ -213,165 +227,241 @@ public class Agency
 		
 	}
 
-	public static void adminMenu(int c) throws IOException
+	public static void adminMenu() throws IOException
 	{
-		Operator agency_operator	= getBankOperatorInstance();
-		String[] parameters 		= null;
-		Operation op				= null;
-		//Pattern myPattern = Pattern.compile("[\\n\\r]+");
-		int ch = c;
+		Operator agency_operator = getBankOperatorInstance();
+		String[] parameters 	 = null;
+		Operation op			 = null;
+		int ch 					 = 0;
 		
-		//System.out.print("\n\n\n\n\n\n\n\n\n\n");
+		clearScreen();
 		printAdminMenu();
 		
 		do
 		{
-			//System.out.flush();
 			ch = sc.next().charAt(0);
-			//sc.nextLine();
-			//System.out.flush();
-			
+			parameters = new String[2];
 			switch(ch)
 			{
 			case '0': //0 - Create account
-				parameters = new String[2];
 				System.out.println("Write the name holder of new account:");
-				parameters[0]	= sc.nextLine();
-				parameters[1]	= sc.nextLine();
-				parameters[0]   = parameters[1];
-				op				= new NewAccountOperation(agency_1);
-				//System.out.println("ancora una " + sc.hasNext() + "  " + sc.nextLine());
+				parameters[0] = sc.nextLine();
+				parameters[0] = sc.nextLine();
+				op			  = new NewAccountOperation(agency_1);
 				break;
 				
 			case '1': //1 - Select account by Name
-				System.out.println("Write the name account holder");
-				parameters		= new String[1];
-				parameters[0]   = sc.next();
+				System.out.println("Select the account by name");
+				parameters[0] = sc.nextLine();
+				agency_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount(sc.nextLine())));
 				break;
 				
 			case '2': //2 - Select account by Number 
-				System.out.println("Write the number account holder");
-				parameters		= new String[1];
-				parameters[0]   = sc.next();
+				System.out.println("Select the account by number");
+				parameters[0] = sc.nextLine();
+				agency_operator.setWorkingAccount(agency_1.agency_accounts.get(Integer.parseInt(sc.nextLine())));
 				break;
 				
 			case '3': //3 - Deposit amount in the account
-				sc.useDelimiter(" ");
-				System.out.println("Write: the account number, the amount to deposit on:");
-				parameters		= new String[2];
-				parameters[0]	= sc.next();
-				parameters[1]	= sc.next();
-				op 				= new DepositOperation();
+				System.out.println("Write: the amount to deposit on the selected account");
+				parameters[0] = sc.nextLine();
+				parameters[0] = (sc.nextLine()).replace(',', '.');
+				op 			  = new DepositOperation();
 				break;
 				
 			case '4': //4 - Withdrawal amount from the account
-				sc.useDelimiter(" ");
-				System.out.println("Write: the account number, the amount to withdrawal:");
-				parameters		= new String[2];
-				parameters[0]	= sc.next();
-				parameters[1]	= sc.next();
-				op 				= new WithdrawalOperation();
+				System.out.println("Write: the amount to withdrawal from the selected account");
+				parameters[0] = sc.nextLine();
+				parameters[0] = (sc.nextLine()).replace(',', '.');
+				op 			  = new WithdrawalOperation();
 				break;
 				
 			case '5': //5 - Buy Financial Item from the bank
-				System.out.println("Write the financial item ID to buy");
-				parameters		= new String[1];
-				parameters[0]	= sc.next();
+				System.out.println("Write: the financial item ID to buy to the selected account");
+				parameters[0] = sc.nextLine();
+				parameters[0] = sc.nextLine();
 				break;
 				
 			case '6': //6 - Sell Financial Item to the bank
-				System.out.println("Write the financial item ID to sell");
-				parameters		= new String[1];
-				parameters[0]	= sc.next();
+				System.out.println("Write: the financial item ID to sell from the selected account");
+				parameters[0] = sc.nextLine();
+				parameters[0] = sc.nextLine();
 				break;
 				
 			case '7': //7 - Activate account
-				System.out.println("Write the account number to activate");
-				parameters		= new String[1];
-				parameters[0]	= sc.next();
-				op				= new EnableOperation();
+				op = new EnableOperation();
 				break;
 				
 			case '8': //8 - DeActivate account
-				System.out.println("Write the account number to deactivate");
-				parameters		= new String[1];
-				parameters[0]	= sc.next();
-				op				= new DisableOperation();
+				op = new DisableOperation();
 				break;
 				
 			case '9': //9 - Bank transfer to other client
 				sc.useDelimiter(" ");
 				System.out.println("Write the destination account number, the amount to deposite on");
-				parameters = new String[2];
-				parameters[0] = sc.next();
-				parameters[1] = sc.next();
+				parameters[0] = sc.nextLine();
+				parameters[1] = sc.nextLine();
 				break;
 				
 			case 'a': //a - List all the financial item
-				parameters		= new String[1];
-				parameters[0]	= "";
+				parameters[0] = "";
 				break;
 				
 			case 'b': //b - List all the account				
-				parameters		= new String[1];
-				parameters[0]	= "";
+				parameters[0] = "";
 				op				= new ListAccountOperation(agency_1);
 				break;
 				
 			case 'm': //m - show the menu
-				parameters		= null;
-				op				= null;
+				parameters = null;
+				op		   = null;
+				break;
+				
 			default:
+				System.out.println("Selected value not available");
 			}
 			
 			if((parameters != null) && (op != null))
 			{
 				agency_operator.setOperation(op);
-				agency_operator.execOperation(parameters);
+				try{
+					op = null;
+					agency_operator.execOperation(parameters);
+					
+				} catch (InvalidArgumentException iae) {
+					System.err.println(iae.getMessage());
+				} catch (InvalidOperationException ioe) {
+					System.err.println(ioe.getMessage());
+				}
 				System.out.print(" m - Show the menu\n");
 			} else {
-				System.out.print("\n\n\n\n\n\n\n\n\n\n");
+				clearScreen();
 				printAdminMenu();
 			}
-		} while ( ch != 'x');
+		} while(ch != 'x');
+		
+		clearScreen();
+	}
+	
+	public static void clearScreen()
+	{
+		System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n");
 	}
 	
 	public static void printAdminMenu()
 	{
 		System.out.print(  " *** Admin Menu *** \n" +
-						   " 0 - Create account \n"+
+						   " 0 - Create account \t\t\t| "+
 				           " 1 - Select account by Name \n" + 
-						   " 2 - Select account by Number \n" +
+						   " 2 - Select account by Number \t\t| " +
 		                   " 3 - Deposit amount in the account \n" +
-		                   " 4 - Withdrawal amount from the account \n" +
+		                   " 4 - Withdrawal amount from the account | " +
 		                   " 5 - Buy Financial Item from the bank \n" + 
-		                   " 6 - Sell Financial Item to the bank\n" +
+		                   " 6 - Sell Financial Item to the bank \t| " +
 		                   " 7 - Activate account\n" +
-		                   " 8 - DeActivate account\n" +
+		                   " 8 - DeActivate account\t\t\t| " +
 						   " 9 - Bank transfer to other client\n" +
-						   " a - List all the financial item\n" +
+						   " a - List all the financial item\t| " +
 						   " b - List all the account\n" +
-						   " m - Show the menu\n" +
+						   " m - Show the menu\t\t\t| " +
 		                   " x - Exit\n >>");
 	}
 	
 	public static void printMenu()
 	{
-		System.out.print(  " *** Menu *** \n" +
-						   " a - Admin account \n"+
-				           " c - Select account by Name\n" + 
+		System.out.print(  " *** Main Menu *** \n" +
+						   " a - Admin menu \n"+
+				           " c - Client menu\n" + 
 		                   " x - Exit\n >>");
+	}
+	
+	public static void clientMenu()
+	{
+		int ch				= 0;
+		String[] parameters = null;
+		Operation op		= null;
+		
+		clearScreen();
+		printClientMenu();
+		do
+		{
+			ch = sc.next().charAt(0);
+			parameters = new String[2];
+			switch(ch)
+			{
+			case '0': //0 - Create account
+				System.out.println("Select the account by name");
+				parameters[0] = sc.nextLine();
+				//agency_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount(sc.nextLine())));
+				break;
+			
+			case '1': //3 - Deposit amount in the account
+				System.out.println("Write: the amount to deposit on the selected account");
+				parameters[0] = sc.nextLine();
+				parameters[0] = (sc.nextLine()).replace(',', '.');
+				op 			  = new DepositOperation();
+				break;
+				
+			case '2': //4 - Withdrawal amount from the account
+				System.out.println("Write: the amount to withdrawal from the selected account");
+				parameters[0] = sc.nextLine();
+				parameters[0] = (sc.nextLine()).replace(',', '.');
+				op 			  = new WithdrawalOperation();
+				break;
+				
+			case '5': //5 - Buy Financial Item from the bank
+				System.out.println("Write: the financial item ID to buy to the selected account");
+				parameters[0] = sc.nextLine();
+				parameters[0] = sc.nextLine();
+				break;
+				
+			case '6': //6 - Sell Financial Item to the bank
+				System.out.println("Write: the financial item ID to sell from the selected account");
+				parameters[0] = sc.nextLine();
+				parameters[0] = sc.nextLine();
+				break;
+				
+			case 'm': //m - show the menu
+				parameters = null;
+				op		   = null;
+				break;
+				
+			default:
+				System.out.println("Selected value not available");
+			}
+			
+			if((parameters != null) && (op != null))
+			{
+				//agency_operator.setOperation(op);
+				try{
+					op = null;
+					//agency_operator.execOperation(parameters);
+					
+				} catch (InvalidArgumentException iae) {
+					System.err.println(iae.getMessage());
+				} catch (InvalidOperationException ioe) {
+					System.err.println(ioe.getMessage());
+				}
+				System.out.print(" m - Show the menu\n");
+			} else {
+				clearScreen();
+				printClientMenu();
+			}
+		} while(ch != 'x');
+		
+		clearScreen();
 	}
 	
 	public static void printClientMenu()
 	{
 		System.out.print  (" *** Client Menu *** \n" +
-				           " 0 - Select account by Name\n" + 
+				           " 0 - Select account by Name\t\t| " + 
 		                   " 1 - Deposit amount in the account\n" +
-		                   " 2 - Withdrawal amount from the account\n" +
+		                   " 2 - Withdrawal amount from the account | " +
 		                   " 3 - Buy Financial Item from the bank\n" + 
-		                   " 4 - Sell Financial Item to the bank\n" +
+		                   " 4 - Sell Financial Item to the bank\t| " +
 						   " 5 - Bank transfer to other client\n" +
+						   " m - Show the menu\t\t\t| " +
 						   " x - Exit\n>>");
 	}
 	

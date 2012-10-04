@@ -23,7 +23,7 @@ public class HeadQuarter
 	// Private constructor prevents instantiation from other classes
 	private HeadQuarter()
 	{
-		bank_account = new Account(Utils.generateAccountNumber(),
+		bank_account = new Account(10000,
 								   "Bank",
 								   new Float(5000000.0));
 		//LoadFinancials();

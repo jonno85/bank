@@ -14,11 +14,12 @@ public class EnableOperation extends Operation
 	public void doOperation(Account ref, Object[] objs)
 			throws InvalidArgumentException, InvalidOperationException
 	{
-		if(ref.getActiveStatus() == false)
+		if((ref != null) && (ref.getActiveStatus() == false))
 		{
 			ref.setActiveStatus(true);
+			System.out.println("# Account: " + ref.getAccountHolder() + " enabled");
 		} else {
-			throw new InvalidOperationException("Error: account already enabled");
+			throw new InvalidOperationException("Error: account already enabled or not selected");
 		}
 	}
 
