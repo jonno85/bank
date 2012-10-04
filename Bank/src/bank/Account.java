@@ -1,15 +1,13 @@
 package bank;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sound.sampled.Port;
-
 import financialItem.StateBond;
-
 import operation.Operation;
 
-public class Account 
+public class Account implements Serializable
 {
 	private Integer	operation_number			= null;
 	private Integer	account_number				= null;

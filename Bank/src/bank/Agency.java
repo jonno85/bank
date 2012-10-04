@@ -1,6 +1,12 @@
 package bank;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,9 +21,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
+import operation.DepositOperation;
+import operation.DisableOperation;
+import operation.EnableOperation;
 import operation.ListAccountOperation;
 import operation.NewAccountOperation;
 import operation.Operation;
+import operation.WithdrawalOperation;
 
 public class Agency
 {
@@ -34,12 +44,12 @@ public class Agency
 	private final ExecutorService officeCounter = 
 			Executors.newFixedThreadPool(OFFICE_COUNTER);
 	
-	private Map<Integer, Account>agency_accounts = null;
+	private SerializableHashMap agency_accounts = null;
 	
 	protected Agency(String name)
 	{
 		this.name 				= name;
-		this.agency_accounts 	= new HashMap<Integer, Account>(); 
+		this.agency_accounts 	= new SerializableHashMap(); 
 	}
 	
 	public void addAccount(String name)
@@ -119,6 +129,8 @@ public class Agency
 		headQuarter = HeadQuarter.getInstance();
 		agency_1 = headQuarter.getNewAgency("Pomigliano");
 		
+		loadData();
+		
 		sc = new Scanner(System.in);
 		
 		char c = 0;
@@ -141,6 +153,7 @@ public class Agency
 						printClientMenu();
 						break;
 					case 'x':
+						storeData();
 						System.out.println("Bank program Ended");
 						System.exit(1);
 						break;					
@@ -164,6 +177,42 @@ public class Agency
 		agency_1.opening(persons);
 	}
 	
+	private static void loadData()
+	{
+		FileInputStream fin;
+		try {
+			fin = new FileInputStream("\\data.ser");
+			ObjectInputStream ois = new ObjectInputStream(fin);
+			agency_1.agency_accounts = (SerializableHashMap) ois.readObject();
+			ois.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	private static void storeData()
+	{
+		try {
+			FileOutputStream fout = new FileOutputStream("\\data.ser");
+			ObjectOutputStream oos = new ObjectOutputStream(fout);
+			
+			oos.writeObject(agency_1.agency_accounts);
+			oos.close();
+			System.out.println("#Serialization: Done");
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 	public static void adminMenu(int c) throws IOException
 	{
 		Operator agency_operator	= getBankOperatorInstance();
@@ -193,17 +242,19 @@ public class Agency
 				op				= new NewAccountOperation(agency_1);
 				//System.out.println("ancora una " + sc.hasNext() + "  " + sc.nextLine());
 				break;
-				/*
+				
 			case '1': //1 - Select account by Name
 				System.out.println("Write the name account holder");
 				parameters		= new String[1];
 				parameters[0]   = sc.next();
 				break;
+				
 			case '2': //2 - Select account by Number 
 				System.out.println("Write the number account holder");
 				parameters		= new String[1];
 				parameters[0]   = sc.next();
 				break;
+				
 			case '3': //3 - Deposit amount in the account
 				sc.useDelimiter(" ");
 				System.out.println("Write: the account number, the amount to deposit on:");
@@ -212,6 +263,7 @@ public class Agency
 				parameters[1]	= sc.next();
 				op 				= new DepositOperation();
 				break;
+				
 			case '4': //4 - Withdrawal amount from the account
 				sc.useDelimiter(" ");
 				System.out.println("Write: the account number, the amount to withdrawal:");
@@ -220,28 +272,33 @@ public class Agency
 				parameters[1]	= sc.next();
 				op 				= new WithdrawalOperation();
 				break;
+				
 			case '5': //5 - Buy Financial Item from the bank
 				System.out.println("Write the financial item ID to buy");
 				parameters		= new String[1];
 				parameters[0]	= sc.next();
 				break;
+				
 			case '6': //6 - Sell Financial Item to the bank
 				System.out.println("Write the financial item ID to sell");
 				parameters		= new String[1];
 				parameters[0]	= sc.next();
 				break;
+				
 			case '7': //7 - Activate account
 				System.out.println("Write the account number to activate");
 				parameters		= new String[1];
 				parameters[0]	= sc.next();
 				op				= new EnableOperation();
 				break;
+				
 			case '8': //8 - DeActivate account
 				System.out.println("Write the account number to deactivate");
 				parameters		= new String[1];
 				parameters[0]	= sc.next();
 				op				= new DisableOperation();
 				break;
+				
 			case '9': //9 - Bank transfer to other client
 				sc.useDelimiter(" ");
 				System.out.println("Write the destination account number, the amount to deposite on");
@@ -249,10 +306,12 @@ public class Agency
 				parameters[0] = sc.next();
 				parameters[1] = sc.next();
 				break;
+				
 			case 'a': //a - List all the financial item
 				parameters		= new String[1];
 				parameters[0]	= "";
-				break;*/
+				break;
+				
 			case 'b': //b - List all the account				
 				parameters		= new String[1];
 				parameters[0]	= "";
