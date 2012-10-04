@@ -6,20 +6,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
+
 import java.util.InputMismatchException;
 import java.util.Iterator;
-import java.util.Map;
+
 import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
+
 
 import operation.DepositOperation;
 import operation.DisableOperation;
@@ -68,7 +65,6 @@ public class Agency
 	public Iterator<Account> getAccounts()
 	{
 		return agency_accounts.values().iterator();
-		
 	}
 	
 	private void officeCountersOpening()
@@ -94,7 +90,8 @@ public class Agency
 	
 	private static class SingletonOperatorHolder { 
         public static final Operator INSTANCE = 
-        		new Operator("admin", agency_1, headQuarter.getBankAccount(), null);
+        		new Operator("admin", agency_1, headQuarter.getBankAccount(),
+        					null, TypeOperator.ADMINISTRATOR);
 	}
 
 	public static Operator getBankOperatorInstance() {
@@ -234,7 +231,6 @@ public class Agency
 		Operation op			 = null;
 		int ch 					 = 0;
 		
-		clearScreen();
 		printAdminMenu();
 		
 		do
@@ -309,7 +305,11 @@ public class Agency
 				
 			case 'b': //b - List all the account				
 				parameters[0] = "";
-				op				= new ListAccountOperation(agency_1);
+				op			  = new ListAccountOperation(agency_1);
+				break;
+				
+			case 'p': //p - print history transaction
+				parameters[0] = "";
 				break;
 				
 			case 'm': //m - show the menu
@@ -318,7 +318,7 @@ public class Agency
 				break;
 				
 			default:
-				System.out.println("Selected value not available");
+				System.out.println("Selected option not available");
 			}
 			
 			if((parameters != null) && (op != null))
@@ -335,7 +335,6 @@ public class Agency
 				}
 				System.out.print(" m - Show the menu\n");
 			} else {
-				clearScreen();
 				printAdminMenu();
 			}
 		} while(ch != 'x');
@@ -350,6 +349,7 @@ public class Agency
 	
 	public static void printAdminMenu()
 	{
+		clearScreen();
 		System.out.print(  " *** Admin Menu *** \n" +
 						   " 0 - Create account \t\t\t| "+
 				           " 1 - Select account by Name \n" + 
@@ -363,12 +363,14 @@ public class Agency
 						   " 9 - Bank transfer to other client\n" +
 						   " a - List all the financial item\t| " +
 						   " b - List all the account\n" +
-						   " m - Show the menu\t\t\t| " +
+						   " p - print history transaction\t\t\t| " +
+						   " m - Show the menu\n" +
 		                   " x - Exit\n >>");
 	}
 	
 	public static void printMenu()
 	{
+		clearScreen();
 		System.out.print(  " *** Main Menu *** \n" +
 						   " a - Admin menu \n"+
 				           " c - Client menu\n" + 
@@ -381,7 +383,6 @@ public class Agency
 		String[] parameters = null;
 		Operation op		= null;
 		
-		clearScreen();
 		printClientMenu();
 		do
 		{
@@ -427,7 +428,7 @@ public class Agency
 				break;
 				
 			default:
-				System.out.println("Selected value not available");
+				System.out.println("Selected option not available");
 			}
 			
 			if((parameters != null) && (op != null))
@@ -444,7 +445,6 @@ public class Agency
 				}
 				System.out.print(" m - Show the menu\n");
 			} else {
-				clearScreen();
 				printClientMenu();
 			}
 		} while(ch != 'x');
@@ -454,6 +454,7 @@ public class Agency
 	
 	public static void printClientMenu()
 	{
+		clearScreen();
 		System.out.print  (" *** Client Menu *** \n" +
 				           " 0 - Select account by Name\t\t| " + 
 		                   " 1 - Deposit amount in the account\n" +

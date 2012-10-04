@@ -1,16 +1,12 @@
 package operation;
 
+import java.util.Iterator;
+
 import bank.Account;
 import bank.Operator;
 import bank.TypeOperator;
 
-public class EnableOperation extends Operation
-{
-
-	public EnableOperation() {
-		super();	
-		this.type = TypeOperation.OPEN_ACCOUNT;
-	}
+public class ShowHistoryOperation extends Operation {
 
 	@Override
 	public void doOperation(Account ref, Object[] objs, Operator oper)
@@ -19,15 +15,15 @@ public class EnableOperation extends Operation
 	{
 		if((oper.getType().equals(TypeOperator.AGENT)) || 
 		   (oper.getType().equals(TypeOperator.ADMINISTRATOR)))
-	    {
-			if((ref != null) && (ref.getActiveStatus() == false))
+		{
+			Iterator<Operation> it = oper.getHistoryOperator();
+			Operation 			op = null;
+			while (it.hasNext())
 			{
-				ref.setActiveStatus(true);
-				System.out.println("# Account: " + ref.getAccountHolder() + " enabled");
-			} else {
-				throw new InvalidOperationException("Error: account already enabled or not selected");
+				op = it.next();
+				System.out.println("# " + op.getInfo());
 			}
-	    } else {
+		} else {
 			throw new InvalidPermissionException("Error: user not allow to execute this operation");
 		}
 	}

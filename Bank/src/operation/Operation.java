@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import bank.Account;
+import bank.Operator;
 
 public abstract class Operation
 {	
@@ -26,7 +27,11 @@ public abstract class Operation
 		this.type		= type;
 	}
 	
-	public abstract void doOperation(Account ref, Object[] objs)
-			throws InvalidArgumentException, InvalidOperationException;
+	public abstract void doOperation(Account ref, Object[] objs, Operator oper)
+			throws InvalidArgumentException, InvalidOperationException, InvalidPermissionException;
+
+	public String getInfo() {
+		return dateTime.toString() + " " + type.toString();
+	}
 	
 }

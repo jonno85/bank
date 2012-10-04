@@ -1,6 +1,8 @@
 package operation;
 
 import bank.Account;
+import bank.Operator;
+import bank.TypeOperator;
 
 public class DepositOperation extends Operation {
 
@@ -10,26 +12,33 @@ public class DepositOperation extends Operation {
 	}
 
 	@Override
-	public void doOperation(Account ref, Object[] obj)
+	public void doOperation(Account ref, Object[] objs, Operator oper)
 			throws InvalidArgumentException, InvalidOperationException
 	{
-		if((ref != null) && (ref.getActiveStatus() == true))
+		if((oper.getType().equals(TypeOperator.AGENT)) 		   || 
+		   (oper.getType().equals(TypeOperator.ADMINISTRATOR)) ||
+		   (oper.getType().equals(TypeOperator.CLIENT)))
 		{
-			if(obj instanceof String[])
+			if((ref != null) && (ref.getActiveStatus() == true))
 			{
-				Float amount = Float.valueOf(obj[0].toString());
-				if(amount > 0.0)
+				if(objs instanceof String[])
 				{
-					System.out.println("# Account: " + ref.getAccountHolder() + " deposit: "+ amount);
-					ref.setAccountBalance(ref.getAccountBalance() + amount);
+					Float amount = Float.valueOf(objs[0].toString());
+					if(amount > 0.0)
+					{
+						System.out.println("# Account: " + ref.getAccountHolder() + " deposit: "+ amount);
+						ref.setAccountBalance(ref.getAccountBalance() + amount);
+					} else {
+						throw new InvalidOperationException("Impossible deposit a negative value");
+					}
 				} else {
-					throw new InvalidOperationException("Impossible deposit a negative value");
+					throw new InvalidArgumentException("Error: wrong numeric format");
 				}
 			} else {
-				throw new InvalidArgumentException("Error: wrong numeric format");
+				throw new InvalidOperationException("Error: Account disabled or not selected");
 			}
 		} else {
-			throw new InvalidOperationException("Error: Account disabled or not selected");
+			throw new InvalidPermissionException("Error: user not allow to execute this operation");
 		}
 	}
 

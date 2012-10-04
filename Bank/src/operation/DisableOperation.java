@@ -1,6 +1,8 @@
 package operation;
 
 import bank.Account;
+import bank.Operator;
+import bank.TypeOperator;
 
 public class DisableOperation extends Operation {
 
@@ -10,17 +12,23 @@ public class DisableOperation extends Operation {
 	}
 
 	@Override
-	public void doOperation(Account ref, Object[] objs)
-			throws InvalidArgumentException, InvalidOperationException
+	public void doOperation(Account ref, Object[] objs, Operator oper)
+			throws InvalidArgumentException, InvalidOperationException,
+			InvalidPermissionException
 	{
-		if(ref.getActiveStatus() == true)
+		if((oper.getType().equals(TypeOperator.AGENT)) || 
+		   (oper.getType().equals(TypeOperator.ADMINISTRATOR)))
 		{
-			ref.setActiveStatus(false);
-			System.out.println("# Account: " + ref.getAccountHolder() + " disabled");
+			if(ref.getActiveStatus() == true)
+			{
+				ref.setActiveStatus(false);
+				System.out.println("# Account: " + ref.getAccountHolder() + " disabled");
+			} else {
+				throw new InvalidOperationException("Error: account already disabled");
+			}
 		} else {
-			throw new InvalidOperationException("Error: account already disabled");
+			throw new InvalidPermissionException("Error: user not allow to execute this operation");
 		}
-		
 	}
 
 }

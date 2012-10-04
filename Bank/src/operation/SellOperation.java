@@ -1,6 +1,8 @@
 package operation;
 
 import bank.Account;
+import bank.Operator;
+import bank.TypeOperator;
 
 public class SellOperation extends Operation {
 
@@ -10,16 +12,21 @@ public class SellOperation extends Operation {
 	}
 
 	@Override
-	public void doOperation(Account ref, Object[] obj)
-		throws InvalidOperationException
+	public void doOperation(Account ref, Object[] objs, Operator oper)
+			throws InvalidArgumentException, InvalidOperationException,
+			InvalidPermissionException
 	{
-		if((ref != null) && (ref.getActiveStatus() == true))
+		if((oper.getType().equals(TypeOperator.AGENT)) 		   || 
+		   (oper.getType().equals(TypeOperator.ADMINISTRATOR)))
 		{
-			//TODO return the bond to the bank 
+			if((ref != null) && (ref.getActiveStatus() == true))
+			{
+				//TODO return the bond to the bank 
+			} else {
+				throw new InvalidOperationException("Impossible to buy bond due to disabled account or not selected");
+			}
 		} else {
-			throw new InvalidOperationException("Impossible to buy bond due to disabled account or not selected");
+			throw new InvalidPermissionException("Error: user not allow to execute this operation");
 		}
 	}
-
-
 }

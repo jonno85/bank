@@ -72,7 +72,7 @@ public class Account implements Serializable
 	 * @param op
 	 * @param obj
 	 */
-	public Boolean resolveOperation(Operation op, Object[] obj)
+	public Boolean resolveOperation(Operation op, Object[] objs, Operator oper)
 	{
 		if(op != null)
 		{
@@ -80,15 +80,15 @@ public class Account implements Serializable
 			{
 			case WITHDRAWAL:
 			case DEPOSIT:
-				op.doOperation(this, obj);
+				op.doOperation(this, objs, oper);
 				break;
 			case OPEN_ACCOUNT:
 			case CLOSE_ACCOUNT:
-				op.doOperation(this, null);
+				op.doOperation(this, null, oper);
 				break;
 			case BUY_FINANCIAL_ITEM:
 			case SELL_FINANCIAL_ITEM:
-				op.doOperation(this, obj);
+				op.doOperation(this, objs, oper);
 				break;
 			}
 			history.put(operation_number++, op);

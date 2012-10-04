@@ -1,8 +1,7 @@
 package operation;
 
-public class InvalidOperationException extends OperationException
+public class InvalidPermissionException extends OperationException
 {
-	
 	/**
 	 * 
 	 */
@@ -10,12 +9,12 @@ public class InvalidOperationException extends OperationException
 	
 	private String exception_message = null;
 
-	public InvalidOperationException() {
+	public InvalidPermissionException() {
 		super(); 
 		this.exception_message = "none";
 	}
 	
-	public InvalidOperationException(String message) {
+	public InvalidPermissionException(String message) {
 		super(); 
 		this.exception_message = message;
 	}
