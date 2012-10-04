@@ -10,7 +10,7 @@ import bank.TypeOperator;
 public class ListAccountOperation extends StrictOperation {
 
 	public ListAccountOperation(Agency agency) {
-		super(agency);
+		super(agency, TypeOperation.LIST_ACCOUNTS);
 	}
 
 	@Override

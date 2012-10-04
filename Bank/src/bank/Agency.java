@@ -26,6 +26,8 @@ import operation.InvalidOperationException;
 import operation.ListAccountOperation;
 import operation.NewAccountOperation;
 import operation.Operation;
+import operation.ShowBalance;
+import operation.ShowHistoryOperation;
 import operation.TransfertOperation;
 import operation.WithdrawalOperation;
 
@@ -250,13 +252,15 @@ public class Agency
 			case '1': //1 - Select account by Name
 				System.out.println("Select the account by name");
 				parameters[0] = sc.nextLine();
-				agency_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount(sc.nextLine())));
-				break;
+				if(!agency_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount(sc.nextLine()))))
+					System.err.println("Error: account name does not exist");
+				break;				
 				
 			case '2': //2 - Select account by Number 
 				System.out.println("Select the account by number");
 				parameters[0] = sc.nextLine();
-				agency_operator.setWorkingAccount(agency_1.agency_accounts.get(Integer.parseInt(sc.nextLine())));
+				if(!agency_operator.setWorkingAccount(agency_1.agency_accounts.get(Integer.parseInt(sc.nextLine()))))
+					System.err.println("Error: account number does not exist");
 				break;
 				
 			case '3': //3 - Deposit amount in the account
@@ -300,7 +304,6 @@ public class Agency
 				parameters[0] = agency_1.agency_accounts.getAccountByNumber(sc.next()); //destination Account
 				parameters[1] = (sc.next()).replace(',', '.');							//amount to transfer
 				op			  = new TransfertOperation();
-				
 				break;
 				
 			case 'a': //a - List all the financial item
@@ -314,6 +317,7 @@ public class Agency
 				
 			case 'p': //p - print history transaction
 				parameters[0] = "";
+				op 			  = new ShowHistoryOperation();
 				break;
 				
 			case 'm': //m - show the menu
@@ -322,7 +326,7 @@ public class Agency
 				break;
 				
 			default:
-				System.out.println("Selected option not available");
+				System.err.println("Selected option not available");
 			}
 			
 			if((parameters != null) && (op != null))
@@ -383,9 +387,10 @@ public class Agency
 	
 	public static void clientMenu()
 	{
-		int ch				= 0;
-		String[] parameters = null;
-		Operation op		= null;
+		Operator client_operator = new Operator("client", agency_1, headQuarter.getBankAccount(), null, TypeOperator.CLIENT);
+		Object[] parameters 	 = null;
+		Operation op			 = null;
+		int ch 					 = 0;
 		
 		printClientMenu();
 		do
@@ -396,8 +401,9 @@ public class Agency
 			{
 			case '0': //0 - Create account
 				System.out.println("Select the account by name");
-				parameters[0] = sc.nextLine();
-				//agency_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount(sc.nextLine())));
+				parameters[0] = sc.nextLine();				
+				if(!client_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount(sc.nextLine()))))
+					System.err.println("Error: account name does not exist");
 				break;
 			
 			case '1': //3 - Deposit amount in the account
@@ -414,16 +420,30 @@ public class Agency
 				op 			  = new WithdrawalOperation();
 				break;
 				
-			case '5': //5 - Buy Financial Item from the bank
+			case '3': //5 - Buy Financial Item from the bank
 				System.out.println("Write: the financial item ID to buy to the selected account");
 				parameters[0] = sc.nextLine();
 				parameters[0] = sc.nextLine();
 				break;
 				
-			case '6': //6 - Sell Financial Item to the bank
+			case '4': //6 - Sell Financial Item to the bank
 				System.out.println("Write: the financial item ID to sell from the selected account");
 				parameters[0] = sc.nextLine();
 				parameters[0] = sc.nextLine();
+				break;
+			
+			case '5': //9 - Bank transfer to other client
+				parameters = new Object[2];
+				System.out.println("Write the destination account number, the amount to deposite on");
+				sc.nextLine();
+				parameters[0] = agency_1.agency_accounts.getAccountByNumber(sc.next()); //destination Account
+				parameters[1] = (sc.next()).replace(',', '.');							//amount to transfer
+				op			  = new TransfertOperation();
+				break;
+			
+			case 's': //m - show balance
+				parameters = null;
+				op		   = new ShowBalance();
 				break;
 				
 			case 'm': //m - show the menu
@@ -437,11 +457,11 @@ public class Agency
 			
 			if((parameters != null) && (op != null))
 			{
-				//agency_operator.setOperation(op);
+				client_operator.setOperation(op);
 				try{
 					op = null;
-					//agency_operator.execOperation(parameters);
-					
+					client_operator.execOperation(parameters);
+					parameters = null;
 				} catch (InvalidArgumentException iae) {
 					System.err.println(iae.getMessage());
 				} catch (InvalidOperationException ioe) {
@@ -467,6 +487,7 @@ public class Agency
 		                   " 4 - Sell Financial Item to the bank\t| " +
 						   " 5 - Bank transfer to other client\n" +
 						   " m - Show the menu\t\t\t| " +
+						   " s - Show Balance\n" +
 						   " x - Exit\n>>");
 	}
 	

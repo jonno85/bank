@@ -6,9 +6,9 @@ public abstract class StrictOperation extends Operation
 {
 	protected Agency working_agency = null;
 	
-	public StrictOperation(Agency agency)
+	public StrictOperation(Agency agency, TypeOperation type)
 	{
-		this.type = TypeOperation.NEW_ACCOUNT;
+		super(type);
 		this.working_agency = agency;
 	}
 

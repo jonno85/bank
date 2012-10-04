@@ -8,8 +8,7 @@ public class EnableOperation extends Operation
 {
 
 	public EnableOperation() {
-		super();	
-		this.type = TypeOperation.OPEN_ACCOUNT;
+		super(TypeOperation.OPEN_ACCOUNT);	
 	}
 
 	@Override

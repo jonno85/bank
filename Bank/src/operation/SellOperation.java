@@ -7,8 +7,7 @@ import bank.TypeOperator;
 public class SellOperation extends Operation {
 
 	public SellOperation() {
-		super();	
-		this.type = TypeOperation.SELL_FINANCIAL_ITEM;
+		super(TypeOperation.SELL_FINANCIAL_ITEM);	
 	}
 
 	@Override

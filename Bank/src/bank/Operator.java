@@ -19,7 +19,7 @@ public class Operator {
 	private Operation	 working_oper	   = null;
 	private Integer		 counter		   = null;
 	private TypeOperator type			   = null;
-	private Map<Integer,Operation> history = null;
+	private Map<Integer,String> history    = null;
 	
 	/**
 	 * full constructor
@@ -37,7 +37,7 @@ public class Operator {
 		this.bank_account		= bank_account;
 		this.working_account	= account;
 		this.working_oper		= operation;
-		this.history 			= new HashMap<Integer, Operation>();
+		this.history 			= new HashMap<Integer, String>();
 		this.counter			= new Integer(0);
 		this.type				= type;
 		
@@ -58,7 +58,7 @@ public class Operator {
 		this.working_agency		= agency;
 		this.bank_account		= bank_account;
 		this.working_account	= account;
-		this.history 			= new HashMap<Integer, Operation>();
+		this.history 			= new HashMap<Integer, String>();
 		this.counter			= new Integer(0);
 		this.type				= type;
 	}
@@ -74,7 +74,13 @@ public class Operator {
 	private void addHistoryOperation()
 	{
 		if(working_oper != null)
-			history.put(counter++, this.working_oper);
+		{
+			
+			history.put(counter++, ""  + working_oper.getInfo() +
+								   " " + working_oper.getType() + 
+								   " " + working_name + 
+								   " " + working_account);
+		}
 	}
 	
 	/**
@@ -90,9 +96,14 @@ public class Operator {
 	 * change the current working account
 	 * @param current_account
 	 */
-	public void setWorkingAccount(Account current_account)
+	public boolean setWorkingAccount(Account current_account)
 	{
-		this.working_account = current_account;
+		if(current_account != null)
+		{
+			working_account = current_account;
+			return true;
+		}
+		return false;
 	}
 	
 	public Account getWorkingAccount()
@@ -127,7 +138,7 @@ public class Operator {
 		}
 	}
 	
-	public Iterator<Operation> getHistoryOperator()
+	public Iterator<String> getHistoryOperator()
 	{
 		return history.values().iterator();
 	}

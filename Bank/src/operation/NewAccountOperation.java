@@ -9,7 +9,7 @@ public class NewAccountOperation extends StrictOperation
 {
 	
 	public NewAccountOperation(Agency agency) {
-		super(agency);	
+		super(agency, TypeOperation.NEW_ACCOUNT);	
 	}
 
 	/**

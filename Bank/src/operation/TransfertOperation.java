@@ -4,8 +4,14 @@ import bank.Account;
 import bank.Operator;
 import bank.TypeOperator;
 
-public class TransfertOperation extends Operation {
+public class TransfertOperation extends Operation
+{
 
+	public TransfertOperation()
+	{
+		super(TypeOperation.TRANSFERT_OPERATION);
+	}
+	
 	@Override
 	public void doOperation(Account ref, Object[] objs, Operator oper)
 			throws InvalidArgumentException, InvalidOperationException,

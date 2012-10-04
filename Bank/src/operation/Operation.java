@@ -18,12 +18,19 @@ public abstract class Operation
 	
 	public Operation()
 	{
-		this.dateTime	= GregorianCalendar.getInstance().getTime();
+		dateTime	= GregorianCalendar.getInstance().getTime();
+		type		= TypeOperation.UNDEFINED;
 	}
 	
 	public Operation(Date dateTime, TypeOperation type)
 	{
 		this.dateTime	= dateTime;
+		this.type		= type;
+	}
+	
+	public Operation(TypeOperation type)
+	{
+		this.dateTime	= GregorianCalendar.getInstance().getTime();
 		this.type		= type;
 	}
 	

@@ -10,8 +10,7 @@ import bank.TypeOperator;
 public class BuyOperation extends Operation {
 
 	public BuyOperation() {
-		super();	
-		this.type = TypeOperation.BUY_FINANCIAL_ITEM;
+		super(TypeOperation.BUY_FINANCIAL_ITEM);
 	}
 
 			

@@ -7,8 +7,7 @@ import bank.TypeOperator;
 public class WithdrawalOperation extends Operation {
 
 	public WithdrawalOperation() {
-		super();	
-		this.type = TypeOperation.WITHDRAWAL;
+		super(TypeOperation.WITHDRAWAL);
 	}
 
 	@Override

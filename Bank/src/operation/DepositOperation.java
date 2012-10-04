@@ -7,8 +7,7 @@ import bank.TypeOperator;
 public class DepositOperation extends Operation {
 
 	public DepositOperation() {
-		super();	
-		this.type = TypeOperation.DEPOSIT;
+		super(TypeOperation.DEPOSIT);	
 	}
 
 	@Override
