@@ -48,4 +48,17 @@ public class SerializableHashMap extends HashMap<Integer, Account> implements Se
 		return new Integer(-1);
 	}
 	
+	public Account getAccountByNumber(String number)
+	{
+		Account account		 = null;
+		Iterator<Account> it = this.values().iterator();
+		while (it.hasNext())
+		{
+			account = it.next();
+			if(account.getAccountNumber().equals(Integer.parseInt(number)) == true)
+				return account;
+		}
+		return null;
+	}
+	
 }

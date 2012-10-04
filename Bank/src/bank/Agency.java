@@ -26,6 +26,7 @@ import operation.InvalidOperationException;
 import operation.ListAccountOperation;
 import operation.NewAccountOperation;
 import operation.Operation;
+import operation.TransfertOperation;
 import operation.WithdrawalOperation;
 
 public class Agency
@@ -227,7 +228,7 @@ public class Agency
 	public static void adminMenu() throws IOException
 	{
 		Operator agency_operator = getBankOperatorInstance();
-		String[] parameters 	 = null;
+		Object[] parameters 	 = null;
 		Operation op			 = null;
 		int ch 					 = 0;
 		
@@ -293,10 +294,13 @@ public class Agency
 				break;
 				
 			case '9': //9 - Bank transfer to other client
-				sc.useDelimiter(" ");
+				parameters = new Object[2];
 				System.out.println("Write the destination account number, the amount to deposite on");
-				parameters[0] = sc.nextLine();
-				parameters[1] = sc.nextLine();
+				sc.nextLine();
+				parameters[0] = agency_1.agency_accounts.getAccountByNumber(sc.next()); //destination Account
+				parameters[1] = (sc.next()).replace(',', '.');							//amount to transfer
+				op			  = new TransfertOperation();
+				
 				break;
 				
 			case 'a': //a - List all the financial item
@@ -327,7 +331,7 @@ public class Agency
 				try{
 					op = null;
 					agency_operator.execOperation(parameters);
-					
+					parameters = null;
 				} catch (InvalidArgumentException iae) {
 					System.err.println(iae.getMessage());
 				} catch (InvalidOperationException ioe) {
@@ -363,7 +367,7 @@ public class Agency
 						   " 9 - Bank transfer to other client\n" +
 						   " a - List all the financial item\t| " +
 						   " b - List all the account\n" +
-						   " p - print history transaction\t\t\t| " +
+						   " p - print history transaction\t\t| " +
 						   " m - Show the menu\n" +
 		                   " x - Exit\n >>");
 	}

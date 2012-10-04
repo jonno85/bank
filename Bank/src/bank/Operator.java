@@ -12,13 +12,13 @@ import operation.Operation;
 
 public class Operator {
 	
-	private String		 working_name	 = null;
-	private Agency		 working_agency  = null;
-	private Account		 bank_account	 = null;
-	private Account		 working_account = null;
-	private Operation	 working_oper	 = null;
-	private Integer		 counter		 = null;
-	private TypeOperator type			 = null;
+	private String		 working_name	   = null;
+	private Agency		 working_agency    = null;
+	private Account		 bank_account	   = null;
+	private Account		 working_account   = null;
+	private Operation	 working_oper	   = null;
+	private Integer		 counter		   = null;
+	private TypeOperator type			   = null;
 	private Map<Integer,Operation> history = null;
 	
 	/**
@@ -93,6 +93,11 @@ public class Operator {
 	public void setWorkingAccount(Account current_account)
 	{
 		this.working_account = current_account;
+	}
+	
+	public Account getWorkingAccount()
+	{
+		return working_account;
 	}
 	
 	/**
