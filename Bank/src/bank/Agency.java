@@ -9,6 +9,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import operation.*;
+import operation.exception.InvalidArgumentException;
+import operation.exception.InvalidOperationException;
 
 public class Agency
 {
@@ -153,20 +155,14 @@ public class Agency
 					printMenu();
 				}
 			} catch(InputMismatchException ime){
-				ime.printStackTrace();
+				System.err.println(ime.getMessage());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 
-
-		System.out.println(" --- " + persons + " are sitting in the waiting room ---");
-
-
-
-
-
-		agency_1.opening(persons);
+//		System.out.println(" --- " + persons + " are sitting in the waiting room ---");
+//		agency_1.opening(persons);
 	}
 
 	/**
@@ -177,7 +173,7 @@ public class Agency
 		FileInputStream	  fin = null;
 		ObjectInputStream ois = null;
 		try {
-			fin = new FileInputStream("\\data.ser");
+			fin = new FileInputStream(".\\data.ser");
 			ois = new ObjectInputStream(fin);
 
 			agency_1.agency_accounts = (SerializableHashMap) ois.readObject();
@@ -207,7 +203,7 @@ public class Agency
 		FileOutputStream   fout = null;
 		ObjectOutputStream oos  = null;
 		try {
-			fout = new FileOutputStream("\\data.ser");
+			fout = new FileOutputStream(".\\data.ser");
 			oos  = new ObjectOutputStream(fout);
 
 			oos.writeObject(agency_1.agency_accounts);
@@ -215,9 +211,10 @@ public class Agency
 			System.out.println("#Serialization Accounts Data: Done");
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
+			System.err.println("#Serialization Accounts Data: Fail");
 		}
 
 	}
@@ -303,7 +300,7 @@ public class Agency
 				break;
 
 			case '9': //9 - Bank transfer to other client
-				parameters = new Object[2];
+				parameters    = new Object[2];
 				System.out.println("Write the destination account number, the amount to deposite on");
 				sc.nextLine();
 				parameters[0] = agency_1.agency_accounts.getAccountByNumber(sc.next()); //destination Account
@@ -321,7 +318,7 @@ public class Agency
 				break;
 
             case 'l': //list bank financial item
-            	parameters = new Object[1];
+            	parameters    = new Object[1];
                 parameters[0] = headQuarter.getFinancialIterator();
                 op            = new ListFinancialOperation();
                 break;
@@ -351,6 +348,7 @@ public class Agency
 					op = null;
 					agency_operator.execOperation(parameters);
 					parameters = null;
+					
 				} catch (InvalidArgumentException iae) {
 					System.err.println(iae.getMessage());
 				} catch (InvalidOperationException ioe) {

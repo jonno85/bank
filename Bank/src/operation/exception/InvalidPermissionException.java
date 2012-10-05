@@ -1,4 +1,4 @@
-package operation;
+package operation.exception;
 
 public class InvalidPermissionException extends OperationException
 {

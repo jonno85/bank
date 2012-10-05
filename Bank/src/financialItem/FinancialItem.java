@@ -1,12 +1,12 @@
 package financialItem;
 
 import bank.Account;
-import bank.Utils;
 
 import java.io.Serializable;
-import java.util.Timer;
+import java.util.Observable;
+import java.util.Observer;
 
-public abstract class FinancialItem implements Serializable
+public abstract class FinancialItem implements Serializable, Observer
 {
 	
 	/**
@@ -48,6 +48,12 @@ public abstract class FinancialItem implements Serializable
 		this.interest  = interest;
 	}
 
+	@Override
+	public void update(Observable o, Object arg)
+	{
+		startRateInterest(o, arg);
+	}
+
 	/**
 	 * @return the owner
 	 */
@@ -62,7 +68,7 @@ public abstract class FinancialItem implements Serializable
 		this.owner = owner;
 	}
 
-	protected abstract void startRateInterest();
+	protected abstract void startRateInterest(Observable arg0, Object arg1);
 
     /**
      * @return the value
@@ -79,6 +85,14 @@ public abstract class FinancialItem implements Serializable
         return life;
     }
 
+    /**
+     * 
+     * @param life
+     */
+    public void setLife(Integer life) {
+        this.life = life;
+    }
+    
     /**
      * @return the taxRate
      */

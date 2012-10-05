@@ -1,7 +1,6 @@
-package operation;
+package operation.exception;
 
-public class InvalidOperationException extends OperationException
-{
+public class InvalidArgumentException extends InvalidOperationException {
 	
 	/**
 	 * 
@@ -10,12 +9,12 @@ public class InvalidOperationException extends OperationException
 	
 	private String exception_message = null;
 
-	public InvalidOperationException() {
+	public InvalidArgumentException() {
 		super(); 
 		this.exception_message = "none";
 	}
 	
-	public InvalidOperationException(String message) {
+	public InvalidArgumentException(String message) {
 		super(); 
 		this.exception_message = message;
 	}
@@ -24,4 +23,5 @@ public class InvalidOperationException extends OperationException
 	{
 		return this.exception_message;
 	}
+
 }

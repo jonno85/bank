@@ -9,6 +9,11 @@ import operation.Operation;
 
 public class Account implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6873036110960725327L;
+	
 	private Integer	operation_number			= null;
 	private Integer	account_number				= null;
 	private String	account_holder				= null;

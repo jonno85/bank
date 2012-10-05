@@ -13,10 +13,12 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Random;
 import java.util.Timer;
+import java.util.TimerTask;
 
-public class HeadQuarter
+public class HeadQuarter extends Observable
 {
 	public static Timer periodic_operation	= null; //to calculate interest value
 	
@@ -56,7 +58,7 @@ public class HeadQuarter
     	FileInputStream	  fin = null;
 		ObjectInputStream ois = null;
 		try {
-			fin = new FileInputStream("\\treasureStock.ser");
+			fin = new FileInputStream(".\\treasureStock.ser");
 			ois = new ObjectInputStream(fin);
 
 			treasureStocks = (BankConcurrentHashMap) ois.readObject();
@@ -70,16 +72,54 @@ public class HeadQuarter
 			System.err.println(e.getMessage());
 		}
 		
-		
-    	
+		beginTreasureInterestCounter();
     }
     
-    public void storeFinancials()
+    /**
+     * manage an async thread to advise Financial Items
+     */
+    private void beginTreasureInterestCounter()
+    {
+    	periodic_operation = new Timer();
+    	periodic_operation.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				_notify();
+			}
+		}, new Long(5000), new Long(120000));
+		
+
+	}
+    
+    /**
+     * collect the useful Financial Items to advise that a new interest operation is needed
+     */
+    public void _notify()
+    {
+    	//register Financial Items
+    	Iterator<FinancialItem> it = treasureStocks.values().iterator();
+    	while (it.hasNext())
+    	{
+			FinancialItem financialItem = (FinancialItem) it.next();
+			Integer life				= financialItem.getLife();
+			if(life > 0)
+			{
+				this.addObserver(financialItem);
+				financialItem.setLife(--life);
+			}
+		}
+   	 	this.setChanged();
+   	 	this.notifyObservers();
+   	 	this.deleteObservers();
+    }
+
+	public void storeFinancials()
     {
     	FileOutputStream   fout = null;
 		ObjectOutputStream oos  = null;
 		try {
-			fout = new FileOutputStream("\\treasureStock.ser");
+			fout = new FileOutputStream(".\\treasureStock.ser");
 			oos  = new ObjectOutputStream(fout);
 
 			oos.writeObject(treasureStocks);
@@ -89,8 +129,8 @@ public class HeadQuarter
 		} catch (FileNotFoundException e) {
 			System.err.println("No stored file founded");
 		} catch (IOException e) {
-			e.printStackTrace();
 			System.err.println(e.getMessage());
+			System.err.println("#Serialization Financial products: Fail");
 		}
     }
     

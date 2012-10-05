@@ -1,12 +1,7 @@
 package financialItem;
 
 import java.util.Observable;
-import java.util.Observer;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import bank.Account;
-import bank.HeadQuarter;
 
 public class StateBond extends FinancialItem
 {
@@ -17,26 +12,16 @@ public class StateBond extends FinancialItem
 
 	public StateBond(Integer index, Account owner, FinancialItemValues fi_value, Integer life, Float taxRate)
 	{
-		super(index, owner, fi_value, life, taxRate, new Float(0.0));
 		
-		//startRateInterest();
+		super(index, owner, fi_value, life*2, taxRate, new Float(0.0));
+		// life * 2 mean every six month a fixed tax_rate is calculated
 	}
 
-	protected void startRateInterest()
+
+	@Override
+	protected void startRateInterest(Observable arg0, Object arg1)
 	{
-		life *= 2; //mean every six month a fixed tax_rate is calculated
-		final Long six_month = new Long(15552000);
-		HeadQuarter.periodic_operation.scheduleAtFixedRate(new TimerTask() {
-
-			@Override
-			public void run() {
-				interest +=  getTaxRate() * getFinancialValue().getIntegerValue();
-				life--;
-				if(getLife() == 0)
-					this.cancel();
-			}
-		}, 0, six_month);
+		interest +=  (getTaxRate() * getFinancialValue().getIntegerValue()) / 100;
 	}
-
 
 }

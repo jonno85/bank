@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 
-import operation.InvalidArgumentException;
-import operation.InvalidOperationException;
 import operation.Operation;
+import operation.exception.InvalidArgumentException;
+import operation.exception.InvalidOperationException;
 
 public class Operator {
 	
