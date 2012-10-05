@@ -6,12 +6,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import bank.Account;
+import bank.HeadQuarter;
 
 public class StateBond extends FinancialItem
 {
-	public StateBond(Account owner, FinancialItemValues fi_value, Integer life, Float taxRate)
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6766703393593742307L;
+
+	public StateBond(Integer index, Account owner, FinancialItemValues fi_value, Integer life, Float taxRate)
 	{
-		super(owner,new Timer(), fi_value, life, taxRate, new Float(0.0));
+		super(index, owner, fi_value, life, taxRate, new Float(0.0));
 		
 		//startRateInterest();
 	}
@@ -20,7 +26,7 @@ public class StateBond extends FinancialItem
 	{
 		life *= 2; //mean every six month a fixed tax_rate is calculated
 		final Long six_month = new Long(15552000);
-		period.scheduleAtFixedRate(new TimerTask() {
+		HeadQuarter.periodic_operation.scheduleAtFixedRate(new TimerTask() {
 
 			@Override
 			public void run() {

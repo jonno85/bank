@@ -71,7 +71,7 @@ public class Account implements Serializable
 	 * update history account
 	 * @param op
 	 * @param obj
-	 */
+	 *
 	public Boolean resolveOperation(Operation op, Object[] objs, Operator oper)
 	{
 		if(op != null)
@@ -97,6 +97,8 @@ public class Account implements Serializable
 		}
 		return true;
 	}
+
+	*/
 
 	public Integer getAccountNumber() {
 		return account_number;

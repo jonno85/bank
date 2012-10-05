@@ -1,12 +1,18 @@
 package financialItem;
 
+import java.io.Serializable;
 import java.util.Collections;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FinancialItemValues {
+public class FinancialItemValues implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6956430156226557307L;
+	
 	private Integer int_value	= null;
 	private String 	name	 	= null;
 

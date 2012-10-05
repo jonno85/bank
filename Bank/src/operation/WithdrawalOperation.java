@@ -33,13 +33,14 @@ public class WithdrawalOperation extends Operation {
 		}
 		
 		Float amount = null;
+		Float total  = null;
 		try{
 			amount = Float.valueOf(objs[0].toString());
-			amount = ref.getAccountBalance() - amount;
-			if(amount >= 0.0)
+			total = ref.getAccountBalance() - amount;
+			if(total >= 0.0)
 			{
 				System.out.println("# Account: " + ref.getAccountHolder() + " withdrawal: "+ amount);
-				ref.setAccountBalance(amount);
+				ref.setAccountBalance(total);
 			} else {
 				throw new InvalidOperationException("Error: Not enough money on the account\nImpossible withdrawal a negative value");
 			}

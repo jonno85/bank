@@ -76,10 +76,10 @@ public class Operator {
 		if(working_oper != null)
 		{
 			
-			history.put(counter++, ""  + working_oper.getInfo() +
+			history.put(counter++, (String) (""  + working_oper.getInfo() +
 								   " " + working_oper.getType() + 
-								   " " + working_name + 
-								   " " + working_account);
+								   " " + working_name != null? working_name : ""+ 
+								   " " + working_account != null? working_account : ""));
 		}
 	}
 	
@@ -141,6 +141,16 @@ public class Operator {
 	public Iterator<String> getHistoryOperator()
 	{
 		return history.values().iterator();
+	}
+	
+	public Account getBankAccount()
+	{
+		if((type != TypeOperator.CLIENT) || 
+		   (type != TypeOperator.ATM))
+		{
+			return bank_account;
+		}
+		return null;
 	}
 
 }

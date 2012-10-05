@@ -41,7 +41,18 @@ public class Agency
 
 	public boolean accountExist(String name)
 	{
-		return agency_accounts.containsValue(name);
+		Account find = null;
+		Iterator<Account> it = agency_accounts.values().iterator();
+		
+		while (it.hasNext())
+		{
+			find = it.next();
+			if(find.getAccountHolder().equalsIgnoreCase(name))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public Iterator<Account> getAccounts()
@@ -182,10 +193,16 @@ public class Agency
 
 	}
 
+	
+	private static void storeData()
+	{
+		storeAccountData();
+		headQuarter.storeFinancials();
+	}
 	/**
 	 * store any accounts to a persistent file
 	 */
-	private static void storeData()
+	private static void storeAccountData()
 	{
 		FileOutputStream   fout = null;
 		ObjectOutputStream oos  = null;
@@ -195,7 +212,7 @@ public class Agency
 
 			oos.writeObject(agency_1.agency_accounts);
 			oos.close();
-			System.out.println("#Serialization: Done");
+			System.out.println("#Serialization Accounts Data: Done");
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -260,15 +277,21 @@ public class Agency
 				break;
 
 			case '5': //5 - Buy Financial Item from the bank
-				System.out.println("Write: the financial item ID to buy to the selected account");
-				parameters[0] = sc.nextLine();
-				parameters[0] = sc.nextLine();
+				parameters = new Object[2];
+				System.out.println("Write: the financial item ID to buy");
+				parameters[0] = sc.nextInt();
+				parameters[0] = headQuarter.getFinancialItemByID((Integer)parameters[0]);
+				parameters[1] = sc.nextLine();
+				op			  = new BuyOperation();
 				break;
 
 			case '6': //6 - Sell Financial Item to the bank
-				System.out.println("Write: the financial item ID to sell from the selected account");
-				parameters[0] = sc.nextLine();
-				parameters[0] = sc.nextLine();
+				parameters = new Object[2];
+				System.out.println("Write: the financial item ID to sell");
+				parameters[0] = sc.nextInt();
+				parameters[0] = headQuarter.getFinancialItemByID((Integer)parameters[0]);
+				parameters[1] = sc.nextLine();
+				op			  = new SellOperation();
 				break;
 
 			case '7': //7 - Activate account
@@ -307,6 +330,10 @@ public class Agency
 				parameters[0] = "";
 				op 			  = new ShowHistoryOperation();
 				break;
+				
+			case 'x': //exit to up level
+				parameters = null;
+				break;
 
 			case 'm': //m - show the menu
 				parameters = null;
@@ -331,7 +358,9 @@ public class Agency
 				}
 				System.out.print(" m - Show the menu\n");
 			} else {
-				printAdminMenu();
+				if(ch != 'x'){
+					printAdminMenu();
+				}
 			}
 		} while(ch != 'x');
 
@@ -408,19 +437,7 @@ public class Agency
 				op 			  = new WithdrawalOperation();
 				break;
 
-			case '3': //5 - Buy Financial Item from the bank
-				System.out.println("Write: the financial item ID to buy to the selected account");
-				parameters[0] = sc.nextLine();
-				parameters[0] = sc.nextLine();
-				break;
-
-			case '4': //6 - Sell Financial Item to the bank
-				System.out.println("Write: the financial item ID to sell from the selected account");
-				parameters[0] = sc.nextLine();
-				parameters[0] = sc.nextLine();
-				break;
-
-			case '5': //9 - Bank transfer to other client
+			case '3': //9 - Bank transfer to other client
 				parameters = new Object[2];
 				System.out.println("Write the destination account number, the amount to deposite on");
 				sc.nextLine();
@@ -436,6 +453,10 @@ public class Agency
 			case 'm': //m - show the menu
 				parameters = null;
 				op		   = null;
+				break;
+			
+			case 'x': //exit to up level
+				parameters = null;
 				break;
 
 			default:
@@ -456,7 +477,9 @@ public class Agency
 				}
 				System.out.print(" m - Show the menu\n");
 			} else {
-				printClientMenu();
+				if(ch != 'x'){
+					printClientMenu();
+				}
 			}
 		} while(ch != 'x');
 
@@ -470,9 +493,7 @@ public class Agency
 				           " 0 - Select account by Name\t\t| " +
 		                   " 1 - Deposit amount in the account\n" +
 		                   " 2 - Withdrawal amount from the account | " +
-		                   " 3 - Buy Financial Item from the bank\n" +
-		                   " 4 - Sell Financial Item to the bank\t| " +
-						   " 5 - Bank transfer to other client\n" +
+						   " 3 - Bank transfer to other client\n" +
 						   " m - Show the menu\t\t\t| " +
 						   " s - Show Balance\n" +
 						   " x - Exit\n>>");

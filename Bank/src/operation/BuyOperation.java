@@ -1,6 +1,7 @@
 package operation;
 
 
+import financialItem.FinancialItem;
 import financialItem.StateBond;
 
 import bank.Account;
@@ -12,7 +13,6 @@ public class BuyOperation extends Operation {
 	public BuyOperation() {
 		super(TypeOperation.BUY_FINANCIAL_ITEM);
 	}
-
 			
 	@Override
 	public void doOperation(Account ref, Object[] objs, Operator oper)
@@ -24,10 +24,22 @@ public class BuyOperation extends Operation {
 		{	
 			if((ref != null) && (ref.getActiveStatus() == true))
 			{
-				StateBond bond = (StateBond)objs[0];
-				if(ref.getAccountBalance() >= bond.getFinancialValue().getIntegerValue())
+				FinancialItem fi = (FinancialItem)objs[0];
+				if(ref.getAccountBalance() >= fi.getFinancialValue().getIntegerValue())
 				{
-					
+					if(!fi.getOwner().equals(ref))
+					{
+						fi.setOwner(ref);
+						
+						Object[] p = new String[1];	//re-build for the withdrawal operation
+						p[0] = fi.getFinancialValue().getIntegerValue().toString();
+						
+						new WithdrawalOperation().doOperation(ref, p, oper);
+						
+						new DepositOperation().doOperation(oper.getBankAccount(), p, oper);
+					} else {
+						throw new InvalidOperationException("Financial Item already bought");
+					}
 				} else {
 					throw new InvalidOperationException("Impossible to buy bond due to insufficient balance");
 				}

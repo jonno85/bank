@@ -2,12 +2,21 @@ package financialItem;
 
 import bank.Account;
 import bank.Utils;
+
+import java.io.Serializable;
 import java.util.Timer;
 
-public abstract class FinancialItem {
-
+public abstract class FinancialItem implements Serializable
+{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6255731841616230494L;
+	
+	private Integer			     	index		   = null;
 	protected Account      		   	owner          = null;
-    protected Timer           		period         = null;
+    /*protected Timer           		period         = null;*/
 	protected FinancialItemValues   fi_value       = null;
 	protected Integer         		life    	   = null;
 	protected Float 		   		taxRate        = null;
@@ -19,19 +28,20 @@ public abstract class FinancialItem {
 	}
 	
 	/**
-	 * complete constructor
+	 * 
+	 * @param index
 	 * @param owner
-	 * @param period
 	 * @param fi_value
 	 * @param life
 	 * @param tax_rate
 	 * @param interest
 	 */
-	protected FinancialItem(Account owner, Timer period, FinancialItemValues fi_value,
+	protected FinancialItem(Integer index, Account owner, /*Timer period,*/ FinancialItemValues fi_value,
 							Integer life, Float tax_rate, Float interest)
 	{
+		this.index	   = index;
 		this.owner     = owner;
-		this.period    = period;
+		/*this.period    = period;*/
 		this.fi_value  = fi_value;
 		this.life      = life;
 		this.taxRate   = tax_rate;
@@ -48,7 +58,7 @@ public abstract class FinancialItem {
 	/**
 	 * @param owner the owner to set
 	 */
-	protected void setOwner(Account owner) {
+	public void setOwner(Account owner) {
 		this.owner = owner;
 	}
 
@@ -90,4 +100,11 @@ public abstract class FinancialItem {
     public void setInterest(Float interest){
     	this.interest = interest;
     }
+
+	/**
+	 * @return the index
+	 */
+	public Integer getIndex() {
+		return index;
+	}
 }
