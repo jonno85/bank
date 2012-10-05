@@ -25,7 +25,7 @@ public class BuyOperation extends Operation {
 			if((ref != null) && (ref.getActiveStatus() == true))
 			{
 				StateBond bond = (StateBond)objs[0];
-				if(ref.getAccountBalance() >= bond.getStateBondValue().getIntegerValue())
+				if(ref.getAccountBalance() >= bond.getFinancialValue().getIntegerValue())
 				{
 					
 				} else {

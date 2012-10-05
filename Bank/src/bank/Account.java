@@ -38,12 +38,12 @@ public class Account implements Serializable
 	 * @param account_holder
 	 * @param initial_balance
 	 */
-	public Account(Integer account_number, String account_holder, Float initial_balance)
+	public Account(Integer account_number, String account_holder, Float initial_balance, Boolean active)
 	{
 		this.operation_number	= new Integer(0);
 		this.account_number		= account_number;
 		this.account_holder		= account_holder;
-		this.account_active		= new Boolean(false);
+		this.account_active		= active;
 		this.account_balance	= initial_balance; 
 		this.history 			= new HashMap<Integer, Operation>();
 	}
