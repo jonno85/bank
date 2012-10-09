@@ -32,8 +32,9 @@ public class NewAccountOperation extends StrictOperation
 				if(working_agency.accountExist(name) == false)
 				{
 					working_agency.addAccount(name);
+					System.out.println("# Account " + name + " created");
 				} else {
-					throw new InvalidArgumentException("Account name already exist");
+					throw new InvalidArgumentException("Error: Account name already exist");
 				}
 			} else {
 				throw new InvalidArgumentException("Error: Not valid name");

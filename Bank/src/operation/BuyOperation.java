@@ -40,6 +40,8 @@ public class BuyOperation extends Operation {
 						new WithdrawalOperation().doOperation(ref, p, oper);
 						
 						new DepositOperation().doOperation(oper.getBankAccount(), p, oper);
+						
+						
 					} else {
 						throw new InvalidOperationException("Financial Item already bought");
 					}

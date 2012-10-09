@@ -15,6 +15,7 @@ import operation.exception.InvalidOperationException;
 public class Agency
 {
 	private 		String 		name 		= null;
+	private static	String      account		= null;
 	private static	HeadQuarter headQuarter = null;
 	private static	Agency		agency_1	= null;
 	private static	Scanner		sc			= null;
@@ -221,10 +222,11 @@ public class Agency
 
 	public static void adminMenu() throws IOException
 	{
-		Operator agency_operator = getBankOperatorInstance();
-		Object[] parameters 	 = null;
-		Operation op			 = null;
-		int ch 					 = 0;
+		Operator   agency_operator = getBankOperatorInstance();
+		Object[]   parameters 	   = null;
+		Operation  op			   = null;
+		int ch 					   = 0;
+		account = "";
 
 		printAdminMenu();
 
@@ -244,16 +246,28 @@ public class Agency
 			case '1': //1 - Select account by Name
 				System.out.println("Select the account by name");
 				parameters[0] = sc.nextLine();
-				if(!agency_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount(sc.nextLine()))))
+				parameters[0] = sc.nextLine();
+				if(!agency_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount((String) parameters[0]))))
+				{
 					System.err.println("Error: account name does not exist");
+					account = "";
+				} else {
+					account = (String) parameters[0];
+				}
 				break;
 
 			case '2': //2 - Select account by Number
 				System.out.println("Select the account by number");
 				parameters[0] = sc.nextLine();
+				parameters[0] = sc.nextLine();
                 try{
-                    if(!agency_operator.setWorkingAccount(agency_1.agency_accounts.get(Integer.parseInt(sc.nextLine()))))
-                        System.err.println("Error: account number does not exist");
+                    if(!agency_operator.setWorkingAccount(agency_1.agency_accounts.get(Integer.parseInt((String) parameters[0]))))
+                    {
+                    	System.err.println("Error: account number does not exist");
+                    	account = "";
+                    } else {
+                    	account = (String) parameters[0];
+                    }
                 }catch(NumberFormatException nfe) {
                     System.err.println("Error: impossible read the number");
                 }
@@ -300,12 +314,16 @@ public class Agency
 				break;
 
 			case '9': //9 - Bank transfer to other client
-				parameters    = new Object[2];
-				System.out.println("Write the destination account number, the amount to deposite on");
-				sc.nextLine();
-				parameters[0] = agency_1.agency_accounts.getAccountByNumber(sc.next()); //destination Account
-				parameters[1] = (sc.next()).replace(',', '.');							//amount to transfer
-				op			  = new TransfertOperation();
+				try{
+					parameters    = new Object[2];
+					System.out.println("Write the destination account number, the amount to deposite on");
+					sc.nextLine();
+					parameters[0] = agency_1.agency_accounts.getAccountByNumber(sc.next()); //destination Account
+					parameters[1] = (sc.next()).replace(',', '.');							//amount to transfer
+					op			  = new TransfertOperation();
+				} catch(NumberFormatException nfe) {
+	                System.err.println("Error: impossible to read the number");
+	            }
 				break;
 
 			case 'a': //a - List all the financial item
@@ -339,8 +357,10 @@ public class Agency
 
 			default:
 				System.err.println("Selected option not available");
+				ch = '1'; //to print: m - show the menu
 			}
 
+			printSelectedAccount();
 			if((parameters != null) && (op != null))
 			{
 				agency_operator.setOperation(op);
@@ -354,25 +374,36 @@ public class Agency
 				} catch (InvalidOperationException ioe) {
 					System.err.println(ioe.getMessage());
 				}
-				System.out.print(" m - Show the menu\n");
+				System.out.print("m - Show the menu\n");
 			} else {
-				if(ch != 'x'){
+				if((ch != 'x') && (ch != '1') && (ch != '2'))
+				{
 					printAdminMenu();
+				} else {
+					System.out.print("m - Show the menu\n");
 				}
 			}
+			
 		} while(ch != 'x');
-
+		account = "";
 		clearScreen();
+	}
+
+	private static void printSelectedAccount() 
+	{
+		System.out.println("Selected account: " + account);
 	}
 
 	public static void clearScreen()
 	{
-		System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		//System.out.print("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
 	}
 
 	public static void printAdminMenu()
 	{
 		clearScreen();
+		printSelectedAccount();
 		System.out.print(  " *** Admin Menu *** \n" +
 						   " 0 - Create account \t\t\t| "+
 				           " 1 - Select account by Name \n" +
@@ -417,8 +448,14 @@ public class Agency
 			case '0': //0 - Create account
 				System.out.println("Select the account by name");
 				parameters[0] = sc.nextLine();
-				if(!client_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount(sc.nextLine()))))
+				parameters[0] = sc.nextLine();
+				if(!client_operator.setWorkingAccount(agency_1.agency_accounts.get(agency_1.agency_accounts.getKeyByNameAccount((String) parameters[0]))))
+				{
 					System.err.println("Error: account name does not exist");
+					account = "";
+				} else {
+					account = (String) parameters[0];
+				}
 				break;
 
 			case '1': //3 - Deposit amount in the account
@@ -436,12 +473,16 @@ public class Agency
 				break;
 
 			case '3': //9 - Bank transfer to other client
-				parameters = new Object[2];
-				System.out.println("Write the destination account number, the amount to deposite on");
-				sc.nextLine();
-				parameters[0] = agency_1.agency_accounts.getAccountByNumber(sc.next()); //NumberFormatException destination Account
-				parameters[1] = (sc.next()).replace(',', '.');							//amount to transfer
-				op			  = new TransfertOperation();
+				try{
+					parameters = new Object[2];
+					System.out.println("Write the destination account number, the amount to deposite on");
+					sc.nextLine();
+					parameters[0] = agency_1.agency_accounts.getAccountByNumber(sc.next()); //NumberFormatException destination Account
+					parameters[1] = (sc.next()).replace(',', '.');							//amount to transfer
+					op			  = new TransfertOperation();
+				} catch(NumberFormatException nfe){
+					System.err.println("Error: impossible to read the number");
+				}
 				break;
 
 			case 's': //m - show balance
@@ -458,9 +499,11 @@ public class Agency
 				break;
 
 			default:
-				System.out.println("Selected option not available");
+				System.err.println("Selected option not available");
+				ch = '0'; //to print: m - show the menu
 			}
 
+			printSelectedAccount();
 			if((parameters != null) && (op != null))
 			{
 				client_operator.setOperation(op);
@@ -473,20 +516,24 @@ public class Agency
 				} catch (InvalidOperationException ioe) {
 					System.err.println(ioe.getMessage());
 				}
-				System.out.print(" m - Show the menu\n");
+				System.out.print("m - Show the menu\n");
 			} else {
-				if(ch != 'x'){
+				if((ch != 'x' ) && (ch != '0'))
+				{
 					printClientMenu();
+				} else {
+					System.out.print("m - Show the menu\n");
 				}
 			}
 		} while(ch != 'x');
-
+		account = "";
 		clearScreen();
 	}
 
 	public static void printClientMenu()
 	{
 		clearScreen();
+		printSelectedAccount();
 		System.out.print  (" *** Client Menu *** \n" +
 				           " 0 - Select account by Name\t\t| " +
 		                   " 1 - Deposit amount in the account\n" +

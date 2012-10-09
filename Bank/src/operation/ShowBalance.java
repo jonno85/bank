@@ -1,7 +1,5 @@
 package operation;
 
-import java.util.Iterator;
-
 import operation.exception.InvalidArgumentException;
 import operation.exception.InvalidOperationException;
 import operation.exception.InvalidPermissionException;
@@ -27,8 +25,13 @@ public class ShowBalance extends Operation
 		   (oper.getType().equals(TypeOperator.CLIENT))	||
 		   (oper.getType().equals(TypeOperator.ADMINISTRATOR)))
 		{
-			System.out.println(ref.getAccountHolder());
-			System.out.println(ref.getAccountBalance());
+			if((ref != null) && (ref.getActiveStatus() == true))
+			{
+				System.out.println(ref.getAccountHolder());
+				System.out.println(ref.getAccountBalance());
+			} else {
+				throw new InvalidOperationException("Account not enabled or not selected");
+			}
 		} else {
 			throw new InvalidPermissionException("Error: user not allow to execute this operation");
 		}

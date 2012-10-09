@@ -42,8 +42,8 @@ public class WithdrawalOperation extends Operation {
 			total = ref.getAccountBalance() - amount;
 			if(total >= 0.0)
 			{
-				System.out.println("# Account: " + ref.getAccountHolder() + " withdrawal: "+ amount);
 				ref.setAccountBalance(total);
+				System.out.println("# Account: " + ref.getAccountHolder() + " withdrawal: "+ amount);
 			} else {
 				throw new InvalidOperationException("Error: Not enough money on the account\nImpossible withdrawal a negative value");
 			}

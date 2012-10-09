@@ -145,7 +145,7 @@ public class HeadQuarter extends Observable
     				   			 bank_account,
     				   			 FinancialItemValues.getValue(seed),  //state bond value
     				   			 new Random().nextInt(20), 			//bond life
-    				   			 seed + new Random().nextFloat());  	//tax rate
+    				   			 seed + new Random().nextFloat() + 1);  	//tax rate
     		treasureStocks.put(new Integer(i),item);
     	}
     }
