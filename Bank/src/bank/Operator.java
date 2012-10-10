@@ -32,7 +32,7 @@ public class Operator {
 	public Operator(String name, Agency agency, Account bank_account, 
 			Account account, Operation operation, TypeOperator type)
 	{
-		this.working_name		= name;
+		this.working_name		= checkOperatorName(name);
 		this.working_agency		= agency;
 		this.bank_account		= bank_account;
 		this.working_account	= account;
@@ -54,13 +54,28 @@ public class Operator {
 	public Operator(String name, Agency agency, Account bank_account,
 			Account account, TypeOperator type)
 	{
-		this.working_name		= name;
+		this.working_name		= checkOperatorName(name);
 		this.working_agency		= agency;
 		this.bank_account		= bank_account;
 		this.working_account	= account;
 		this.history 			= new HashMap<Integer, String>();
 		this.counter			= new Integer(0);
 		this.type				= type;
+	}
+	
+	/**
+	 * check the correctness of the passed name string
+	 * @param holder
+	 * @return
+	 */
+	private String checkOperatorName(String op_name)
+	{
+		String name = op_name;
+		if(op_name == null)
+			name = "unknown name";
+		if(op_name.length() == 0)
+			name = "unknown name";
+		return name;
 	}
 	
 	public TypeOperator getType()
@@ -93,6 +108,11 @@ public class Operator {
 	public void setOperation(Operation op)
 	{
 		this.working_oper = op;
+	}
+	
+	public Operation getOperation()
+	{
+		return this.working_oper;
 	}
 	
 	/**

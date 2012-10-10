@@ -500,7 +500,7 @@ public class Agency
 				break;
 
 			case 's': //m - show balance
-				op = new ShowBalance();
+				op = new ShowBalanceOperation();
 				break;
 
 			case 'm': //m - show the menu

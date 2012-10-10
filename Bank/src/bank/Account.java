@@ -32,7 +32,7 @@ public class Account implements Serializable
 	{
 		this.operation_number	= new Integer(0);
 		this.account_number		= account_number;
-		this.account_holder		= account_holder;
+		this.account_holder		= checkAccountHolder(account_holder);
 		this.account_active		= new Boolean(false); 
 		this.account_balance	= new Float(0.0); 
 		this.history 			= new HashMap<Integer, Operation>();
@@ -46,12 +46,28 @@ public class Account implements Serializable
 	 */
 	public Account(Integer account_number, String account_holder, Float initial_balance, Boolean active)
 	{
+		
 		this.operation_number	= new Integer(0);
 		this.account_number		= account_number;
-		this.account_holder		= account_holder;
+		this.account_holder		= checkAccountHolder(account_holder);
 		this.account_active		= active;
 		this.account_balance	= initial_balance; 
 		this.history 			= new HashMap<Integer, Operation>();
+	}
+	
+	/**
+	 * check the correctness of the passed name string
+	 * @param holder
+	 * @return
+	 */
+	private String checkAccountHolder(String holder)
+	{
+		String name = holder;
+		if(holder == null)
+			name = "unknown name";
+		if(holder.length() == 0)
+			name = "unknown name";
+		return name;
 	}
 	
 	/**
@@ -121,7 +137,10 @@ public class Account implements Serializable
 	 * @param account_balance the account_balance to set
 	 */
 	public void setAccountBalance(Float account_balance) {
-		this.account_balance = account_balance;
+		if(account_balance > 0.0)
+		{
+			this.account_balance = account_balance;
+		}
 	}
 	
 	/**

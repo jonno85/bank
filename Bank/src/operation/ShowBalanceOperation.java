@@ -8,10 +8,10 @@ import bank.Account;
 import bank.Operator;
 import bank.TypeOperator;
 
-public class ShowBalance extends Operation
+public class ShowBalanceOperation extends Operation
 {
 
-	public ShowBalance()
+	public ShowBalanceOperation()
 	{
 		super(TypeOperation.SHOW_BALANCE);
 	}

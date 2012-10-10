@@ -66,6 +66,7 @@ public class HeadQuarter extends Observable
 			ois.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("No stored treasureStock data founded");
+			
 			createFinancials();
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -144,16 +145,16 @@ public class HeadQuarter extends Observable
     		seed = new Random().nextInt(6) + 1;
     		item = new StateBond(new Integer(i),
     				   			 bank_account,
-    				   			 FinancialItemValues.getValue(seed),  //state bond value
-    				   			 new Random().nextInt(20), 			//bond life
-    				   			 seed + new Random().nextFloat() + 1);  	//tax rate
+    				   			 FinancialItemValues.getValue(seed),    //state bond value
+    				   			 1 + new Random().nextInt(20), 			//bond life
+    				   			 seed + new Random().nextFloat() + 1);  //tax rate
     		treasureStocks.put(new Integer(i),item);
     	}
     }
 
 	protected Agency getNewAgency(String name) throws BankException
 	{
-		if(!agencies.containsKey(name))
+		if((!agencies.containsKey(name)) && (name.length() > 1))
 		{
 			Agency a = new Agency(name);
 			agencies.put(name, a);
