@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import financialItem.FinancialItem;
 import financialItem.StateBond;
 import operation.Operation;
 
@@ -14,13 +15,13 @@ public class Account implements Serializable
 	 */
 	private static final long serialVersionUID = 6873036110960725327L;
 	
-	private Integer	operation_number			= null;
-	private Integer	account_number				= null;
-	private String	account_holder				= null;
-	private Boolean	account_active				= null;
-	private Float	account_balance				= null;
-	private Map<Integer, Operation> history		= null;
-	private Map<Integer, StateBond> portfolio	= null;
+	private Integer	operation_number				= null;
+	private Integer	account_number					= null;
+	private String	account_holder					= null;
+	private Boolean	account_active					= null;
+	private Float	account_balance					= null;
+	private Map<Integer, Operation> history			= null;
+	private Map<Integer, FinancialItem> portfolio	= null;
 	
 	/**
 	 * create new account with no initial amount
@@ -136,7 +137,7 @@ public class Account implements Serializable
 	 */
 	public void inizializePortfolio()
 	{
-		portfolio = new HashMap<Integer, StateBond>();
+		portfolio = new HashMap<Integer, FinancialItem>();
 	}
 	
 }

@@ -41,7 +41,7 @@ public class Operator {
 		this.counter			= new Integer(0);
 		this.type				= type;
 		
-		addHistoryOperation();
+		addHistoryOperation(null);
 	}
 	
 	/**
@@ -71,16 +71,19 @@ public class Operator {
 	/**
 	 * save information about last operation executed
 	 */
-	private void addHistoryOperation()
+	private void addHistoryOperation(Object[] parameters)
 	{
-		if(working_oper != null)
+		String s =  " "                  + (working_oper != null? working_oper.getInfo() : "no user ");		
+			   s += "\t\t # name: "      + (working_name != null? working_name : "no name "); 
+		       s += "\n\t # worked on: " + (working_account != null? working_account.getAccountHolder() : "no account ");
+
+        // pay attention to which case use different objects values
+		if(parameters != null)
 		{
-			
-			history.put(counter++, (String) (""  + working_oper.getInfo() +
-								   " " + working_oper.getType() + 
-								   " " + working_name != null? working_name : ""+ 
-								   " " + working_account != null? working_account : ""));
+			if((parameters instanceof String[]) && (parameters[0] != ""))
+				s += "\t # parameters:" + (String)parameters[0];
 		}
+		history.put(counter++, s);
 	}
 	
 	/**
@@ -128,11 +131,11 @@ public class Operator {
 		{
 			// !!working_account could not be necessary!! like for NewAccountOperation
 			working_oper.doOperation(working_account, parameters, this);
-			addHistoryOperation();
+			addHistoryOperation(parameters);
 			
 			/*** clean operation data ***/ 
-			working_oper	= null;
-			parameters		= null;
+//			working_oper	= null;
+//			parameters		= null;
 		} else {
 			throw new InvalidOperationException("Error: no operation defined");
 		}

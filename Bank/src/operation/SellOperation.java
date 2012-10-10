@@ -5,6 +5,7 @@ import operation.exception.InvalidOperationException;
 import operation.exception.InvalidPermissionException;
 import financialItem.FinancialItem;
 import bank.Account;
+import bank.HeadQuarter;
 import bank.Operator;
 import bank.TypeOperator;
 
@@ -25,18 +26,23 @@ public class SellOperation extends Operation {
 			if((ref != null) && (ref.getActiveStatus() == true))
 			{
 				FinancialItem fi = (FinancialItem)objs[0];
-				if(fi.getOwner().equals(ref))
+				if(HeadQuarter.isFinancialItemExist(fi))
 				{
-					fi.setOwner(oper.getBankAccount());
-					
-					Object[] p = new String[1];	//re-build for the withdrawal operation
-					p[0] = fi.getFinancialValue().getIntegerValue().toString();
-					
-					new WithdrawalOperation().doOperation(oper.getBankAccount(), p, oper);
-					
-					new DepositOperation().doOperation(ref, p, oper);
+					if(fi.getOwner().equals(ref))
+					{
+						fi.setOwner(oper.getBankAccount());
+						
+						Object[] p = new String[1];	//re-build for the withdrawal operation
+						p[0] = fi.getFinancialValue().getIntegerValue().toString();
+						
+						new WithdrawalOperation().doOperation(oper.getBankAccount(), p, oper);
+						
+						new DepositOperation().doOperation(ref, p, oper);
+					} else {
+						throw new InvalidOperationException("Financial Item not owned");
+					}
 				} else {
-					throw new InvalidOperationException("Financial Item not owned");
+					throw new InvalidArgumentException("Financial Item not founded");
 				}
 			} else {
 				throw new InvalidOperationException("Impossible to buy bond due to disabled account or not selected");

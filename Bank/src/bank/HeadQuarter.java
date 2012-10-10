@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
@@ -28,7 +29,7 @@ public class HeadQuarter extends Observable
 	private Map<String,Agency> agencies =
 			new HashMap<String,Agency>();
 
-	private BankConcurrentHashMap treasureStocks =
+	private static BankConcurrentHashMap treasureStocks =
 			new BankConcurrentHashMap(BANK_PORTFOLIO);
 
 	// Private constructor prevents instantiation from other classes
@@ -171,10 +172,29 @@ public class HeadQuarter extends Observable
         return treasureStocks.values().iterator();
     }
     
-    public FinancialItem getFinancialItemByID(Integer ID)
+    public FinancialItem getFinancialItemByID(Integer ID) throws BankException
     {
-    	
-    	return treasureStocks.get(ID);
+    	FinancialItem fi = null;
+    	try{
+    		fi = treasureStocks.get(ID);
+    	} catch (ClassCastException cce) {
+    		throw new BankException("Impossible find the selected Financial Item");
+    	} catch (NullPointerException npe) {
+    		throw new BankException("Impossible find the selected Financial Item");
+    	}
+    	return fi;
+    }
+    
+    public static boolean isFinancialItemExist(FinancialItem fi)
+    {
+    	Iterator<FinancialItem> it = treasureStocks.values().iterator();
+    	while (it.hasNext()) {
+			 if(it.next().equals(fi))
+			 {
+				 return true;
+			 }
+		}
+    	return false;
     }
 
 }

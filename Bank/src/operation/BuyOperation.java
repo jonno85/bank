@@ -8,6 +8,7 @@ import financialItem.FinancialItem;
 import financialItem.StateBond;
 
 import bank.Account;
+import bank.HeadQuarter;
 import bank.Operator;
 import bank.TypeOperator;
 
@@ -28,25 +29,30 @@ public class BuyOperation extends Operation {
 			if((ref != null) && (ref.getActiveStatus() == true))
 			{
 				FinancialItem fi = (FinancialItem)objs[0];
-				if(ref.getAccountBalance() >= fi.getFinancialValue().getIntegerValue())
+				if(HeadQuarter.isFinancialItemExist(fi))
 				{
-					if(!fi.getOwner().equals(ref))
+					if(ref.getAccountBalance() >= fi.getFinancialValue().getIntegerValue())
 					{
-						fi.setOwner(ref);
-						
-						Object[] p = new String[1];	//re-build for the withdrawal operation
-						p[0] = fi.getFinancialValue().getIntegerValue().toString();
-						
-						new WithdrawalOperation().doOperation(ref, p, oper);
-						
-						new DepositOperation().doOperation(oper.getBankAccount(), p, oper);
-						
-						
+						if(!fi.getOwner().equals(ref))
+						{
+							fi.setOwner(ref);
+							
+							Object[] p = new String[1];	//re-build for the withdrawal operation
+							p[0] = fi.getFinancialValue().getIntegerValue().toString();
+							
+							new WithdrawalOperation().doOperation(ref, p, oper);
+							
+							new DepositOperation().doOperation(oper.getBankAccount(), p, oper);
+							
+							
+						} else {
+							throw new InvalidOperationException("Financial Item already bought");
+						}
 					} else {
-						throw new InvalidOperationException("Financial Item already bought");
+						throw new InvalidOperationException("Impossible to buy bond due to insufficient balance");
 					}
 				} else {
-					throw new InvalidOperationException("Impossible to buy bond due to insufficient balance");
+					throw new InvalidArgumentException("Financial Item not founded");
 				}
 			} else {
 				throw new InvalidOperationException("Impossible to buy bond due to disabled account or not selected");

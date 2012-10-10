@@ -27,11 +27,13 @@ public class ShowHistoryOperation extends Operation {
 		{
 			Iterator<String> it = oper.getHistoryOperator();
 			String   	     op = null;
+			System.out.println("______________________________________________________________________________________________");
 			while (it.hasNext())
 			{
 				op = it.next();
-				System.out.println("# " + op);
+				System.out.println("## " + op);
 			}
+			System.out.println("______________________________________________________________________________________________");
 		} else {
 			throw new InvalidPermissionException("Error: user not allow to execute this operation");
 		}

@@ -42,7 +42,7 @@ public abstract class Operation
 			throws InvalidArgumentException, InvalidOperationException, InvalidPermissionException;
 
 	public String getInfo() {
-		return dateTime.toString() + " " + type.toString();
+		return "" + dateTime.toString() + " # " + type.toString();
 	}
 	
 }

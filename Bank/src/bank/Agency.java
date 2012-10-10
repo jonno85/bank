@@ -149,7 +149,7 @@ public class Agency
 
 					case 'x':
 						storeData();
-						System.out.println("Bank program Ended");
+						System.out.println("# Bank program Ended");
 						System.exit(1);
 						break;
 					}
@@ -209,13 +209,13 @@ public class Agency
 
 			oos.writeObject(agency_1.agency_accounts);
 			oos.close();
-			System.out.println("#Serialization Accounts Data: Done");
+			System.out.println("# Serialization Accounts Data: Done");
 
 		} catch (FileNotFoundException e) {
 			System.err.println(e.getMessage());
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
-			System.err.println("#Serialization Accounts Data: Fail");
+			System.err.println("# Serialization Accounts Data: Fail");
 		}
 
 	}
@@ -290,19 +290,31 @@ public class Agency
 			case '5': //5 - Buy Financial Item from the bank
 				parameters = new Object[2];
 				System.out.println("Write: the financial item ID to buy");
-				parameters[0] = sc.nextInt();
-				parameters[0] = headQuarter.getFinancialItemByID((Integer)parameters[0]);
-				parameters[1] = sc.nextLine();
-				op			  = new BuyOperation();
+				try {
+					parameters[0] = sc.nextInt();
+					parameters[0] = headQuarter.getFinancialItemByID((Integer)parameters[0]);
+					parameters[1] = sc.nextLine();
+					op			  = new BuyOperation();
+				} catch(BankException be) {
+					System.err.println(be.getMessage());
+				} catch(InputMismatchException ime) {
+					System.err.println("Error: not recognized input");
+				}
 				break;
 
 			case '6': //6 - Sell Financial Item to the bank
 				parameters = new Object[2];
 				System.out.println("Write: the financial item ID to sell");
-				parameters[0] = sc.nextInt();
-				parameters[0] = headQuarter.getFinancialItemByID((Integer)parameters[0]);
-				parameters[1] = sc.nextLine();
-				op			  = new SellOperation();
+				try {
+					parameters[0] = sc.nextInt();
+					parameters[0] = headQuarter.getFinancialItemByID((Integer)parameters[0]);
+					parameters[1] = sc.nextLine();
+					op			  = new SellOperation();
+				} catch(BankException be) {
+					System.err.println(be.getMessage());
+				} catch(InputMismatchException ime) {
+					System.err.println("Error: not recognized input");
+				}
 				break;
 
 			case '7': //7 - Activate account
@@ -365,8 +377,10 @@ public class Agency
 			{
 				agency_operator.setOperation(op);
 				try{
-					op = null;
+					
 					agency_operator.execOperation(parameters);
+					
+					op 		   = null;
 					parameters = null;
 					
 				} catch (InvalidArgumentException iae) {

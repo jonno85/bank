@@ -39,13 +39,18 @@ public class WithdrawalOperation extends Operation {
 		Float total  = null;
 		try{
 			amount = Float.valueOf(objs[0].toString());
-			total = ref.getAccountBalance() - amount;
-			if(total >= 0.0)
+			if(amount > 0.0)
 			{
-				ref.setAccountBalance(total);
-				System.out.println("# Account: " + ref.getAccountHolder() + " withdrawal: "+ amount);
+				total = ref.getAccountBalance() - amount;
+				if(total >= 0.0)
+				{
+					ref.setAccountBalance(total);
+					System.out.println("# Account: " + ref.getAccountHolder() + " withdrawal: "+ amount);
+				} else {
+					throw new InvalidOperationException("Error: Not enough money on the account\nImpossible withdrawal a negative value");
+				}
 			} else {
-				throw new InvalidOperationException("Error: Not enough money on the account\nImpossible withdrawal a negative value");
+				throw new InvalidOperationException("Impossible deposit a negative value");
 			}
 		} catch (NumberFormatException nfe){
 			throw new InvalidArgumentException("Error: wrong numeric format");
