@@ -3,6 +3,7 @@ package operation;
 import operation.exception.InvalidArgumentException;
 import operation.exception.InvalidOperationException;
 import operation.exception.InvalidPermissionException;
+import operation.exception.OperationException;
 import bank.Account;
 import bank.Operator;
 import bank.TypeOperator;
@@ -30,11 +31,20 @@ public class TransfertOperation extends Operation
 				{
 					Object[] arg = new String[2];
 					arg[0] = objs[1];
-					new WithdrawalOperation().doOperation(ref, arg, oper);
 					
-					Account dest = (Account)objs[0];
-					new DepositOperation().doOperation(dest, arg, oper);
-					
+					try{ //able to withdrawal from the source account
+						new WithdrawalOperation().doOperation(ref, arg, oper);
+						
+						try{ //able to deposit to the destination account
+							Account dest = (Account)objs[0];
+							new DepositOperation().doOperation(dest, arg, oper);
+						} catch(InvalidOperationException op) {
+							new DepositOperation().doOperation(ref, arg, oper);
+							throw new InvalidOperationException("Account not enabled or not selected");
+						}
+					} catch(InvalidOperationException op) {
+						throw new InvalidOperationException("Error: impossible to withdrawal money");
+					}
 				} else {
 					throw new InvalidArgumentException("Error: wrong numeric or naming format");
 				}
@@ -46,5 +56,4 @@ public class TransfertOperation extends Operation
 		}
 						
 	}
-
 }

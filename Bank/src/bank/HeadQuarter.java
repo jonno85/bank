@@ -126,13 +126,13 @@ public class HeadQuarter extends Observable
 
 			oos.writeObject(treasureStocks);
 			oos.close();
-			System.out.println("#Serialization Financial products: Done");
+			System.out.println("# Serialization Financial products: Done");
 
 		} catch (FileNotFoundException e) {
 			System.err.println("No stored file founded");
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
-			System.err.println("#Serialization Financial products: Fail");
+			System.err.println("# Serialization Financial products: Fail");
 		}
     }
     
