@@ -18,6 +18,7 @@ import java.util.Observable;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeMap;
 
 public class HeadQuarter extends Observable
 {
@@ -29,8 +30,8 @@ public class HeadQuarter extends Observable
 	private Map<String,Agency> agencies =
 			new HashMap<String,Agency>();
 
-	private static BankConcurrentHashMap treasureStocks =
-			new BankConcurrentHashMap(BANK_PORTFOLIO);
+	private static TreeMap<Integer, FinancialItem> treasureStocks =
+			new TreeMap<Integer, FinancialItem>();
 
 	// Private constructor prevents instantiation from other classes
 	private HeadQuarter()
@@ -62,7 +63,7 @@ public class HeadQuarter extends Observable
 			fin = new FileInputStream(".\\treasureStock.ser");
 			ois = new ObjectInputStream(fin);
 
-			treasureStocks = (BankConcurrentHashMap) ois.readObject();
+			treasureStocks = (TreeMap<Integer, FinancialItem>) ois.readObject();
 			ois.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("No stored treasureStock data founded");
